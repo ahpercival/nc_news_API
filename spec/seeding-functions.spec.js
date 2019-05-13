@@ -172,7 +172,7 @@ describe('renameKeys', () => {
 
 });
 
-describe.only('formatPairs', () => {
+describe('formatPairs', () => {
     it('returns a new empty array, when passed an empty array', () => {
         const albums = [];
         const artistLookup = {};
