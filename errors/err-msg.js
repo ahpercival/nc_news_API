@@ -3,5 +3,5 @@ module.exports = {
 
     400: { 4001: 'Invalid order request' },
 
-    404: { 4041: 'No articles by this author' }
+    404: { 4041: 'No articles found' }
 }

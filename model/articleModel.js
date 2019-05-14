@@ -1,6 +1,6 @@
 const connection = require('../db/connection')
 
-const fetchAllArticles = (sort_by, order, author) => {
+const fetchAllArticles = (sort_by, order, author, topic) => {
     return connection
         .select('articles.author', 'title', 'articles.article_id', 'topic', 'articles.created_at', 'articles.votes')
         .from('articles')
@@ -8,7 +8,10 @@ const fetchAllArticles = (sort_by, order, author) => {
         .leftJoin('comments', 'articles.article_id', '=', 'comments.article_id')
         .groupBy('articles.article_id')
         .orderBy(sort_by || 'articles.created_at', order || 'desc')
-        .modify(query => { if (author) { query.where('articles.author', author) } })
+        .modify(query => {
+            if (author) { query.where('articles.author', author) }
+            if (topic) { query.where('articles.topic', topic) }
+        })
 }
 
 module.exports = fetchAllArticles

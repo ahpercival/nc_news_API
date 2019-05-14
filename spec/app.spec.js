@@ -86,7 +86,9 @@ describe.only('THE API ENDPOINT', () => {
                 .expect(200)
                 .then(({ body }) => {
                   expect(body.articles).to.be.an('array');
-                  expect(body.articles[0]).to.contain.keys('author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'comment_count')
+                  body.articles.forEach(article => {
+                    expect(article).to.contain.keys('author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'comment_count')
+                  })
                 });
             });
 
@@ -138,6 +140,18 @@ describe.only('THE API ENDPOINT', () => {
 
               });
 
+              it('Filters articles by a valid topic value specified in the query', () => {
+                return request
+                  .get('/api/articles?topic=mitch')
+                  .expect(200)
+                  .then(({ body }) => {
+                    body.articles.forEach(article =>
+                      expect(article.topic).to.eql('mitch')
+                    )
+                  });
+
+              });
+
             });
 
             describe('Status 400 - Bad Request', () => {
@@ -170,7 +184,17 @@ describe.only('THE API ENDPOINT', () => {
                   .get('/api/articles?author=a')
                   .expect(404)
                   .then(({ body }) => {
-                    expect(body.msg).to.eql('No articles by this author')
+                    expect(body.msg).to.eql('No articles found')
+                  });
+
+              });
+
+              it('Should respond with 404 and error message if passed invalid topic', () => {
+                return request
+                  .get('/api/articles?topic=a')
+                  .expect(404)
+                  .then(({ body }) => {
+                    expect(body.msg).to.eql('No articles found')
                   });
 
               });
