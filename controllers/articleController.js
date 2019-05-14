@@ -1,13 +1,14 @@
 const fetchAllArticles = require('../model/articleModel')
 
 const getAllArticles = (req, res, next) => {
-    const { sort_by, order } = req.query
-    // const orderBy = ['desc', 'asc']
+    const orderBy = ['desc', 'asc']
+    const { sort_by, order, author } = req.query
 
-    // if (!orderBy.includes(order)) { return next({ code: 4001 }) }
+    if (order && !orderBy.includes(order)) { return next({ code: 4001 }) }
 
-    fetchAllArticles(sort_by, order)
+    fetchAllArticles(sort_by, order, author)
         .then(articles => {
+            if (!articles.length) { return next({ code: 4041 }) }
             res.status(200).send({ articles })
         })
         .catch(next)

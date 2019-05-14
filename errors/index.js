@@ -14,9 +14,16 @@ exports.handlePsqlErrors = (err, req, res, next) => {
   } else next(err)
 }
 
-exports.handleCustomErrors = (err, req, res, next) => {
+exports.handle400Errors = (err, req, res, next) => {
   if (errMsg[400][err.code]) {
     res.status(400).send({ msg: errMsg[400][err.code] })
+  } else next(err)
+
+}
+
+exports.handle404Errors = (err, req, res, next) => {
+  if (errMsg[404][err.code]) {
+    res.status(404).send({ msg: errMsg[404][err.code] })
   } else next(err)
 
 }

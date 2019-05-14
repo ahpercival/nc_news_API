@@ -29,7 +29,6 @@ describe.only('THE API ENDPOINT', () => {
             });
         });
 
-
       });
 
       describe('Status 404 - Not Found', () => {
@@ -43,9 +42,7 @@ describe.only('THE API ENDPOINT', () => {
             });
         });
 
-
       });
-
 
     });
 
@@ -67,15 +64,11 @@ describe.only('THE API ENDPOINT', () => {
                 });
             });
 
-
           });
-
 
         });
 
-
       });
-
 
     });
 
@@ -133,6 +126,18 @@ describe.only('THE API ENDPOINT', () => {
 
               });
 
+              it('Filters articles by a valid username value specified in the query', () => {
+                return request
+                  .get('/api/articles?author=butter_bridge')
+                  .expect(200)
+                  .then(({ body }) => {
+                    body.articles.forEach(article =>
+                      expect(article.author).to.eql('butter_bridge')
+                    )
+                  });
+
+              });
+
             });
 
             describe('Status 400 - Bad Request', () => {
@@ -146,12 +151,26 @@ describe.only('THE API ENDPOINT', () => {
                   });
               });
 
-              xit('Should respond with 400 and error message if passed an invalid order request', () => {
+              it('Should respond with 400 and error message if passed an invalid order request', () => {
                 return request
                   .get('/api/articles?order=a')
                   .expect(400)
                   .then(({ body }) => {
                     expect(body.msg).to.eql('Invalid order request')
+                  });
+
+              });
+
+            });
+
+            describe('Status 404 - Not Found', () => {
+
+              it('Should respond with 404 and error message if passed invalid username', () => {
+                return request
+                  .get('/api/articles?author=a')
+                  .expect(404)
+                  .then(({ body }) => {
+                    expect(body.msg).to.eql('No articles by this author')
                   });
 
               });
