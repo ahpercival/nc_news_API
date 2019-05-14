@@ -172,7 +172,6 @@ describe.only('THE API ENDPOINT', () => {
                   .then(({ body }) => {
                     expect(body.msg).to.eql('Invalid order request')
                   });
-
               });
 
             });
@@ -222,7 +221,33 @@ describe.only('THE API ENDPOINT', () => {
 
               });
 
+              describe('Status 404 - Not Found', () => {
 
+                it('Should respond with 404 and error message if passed invalid article ID', () => {
+                  return request
+                    .get('/api/articles/1000000')
+                    .expect(404)
+                    .then(({ body }) => {
+                      expect(body.msg).to.eql('No articles found')
+
+                    });
+
+                });
+
+              });
+
+              describe('Status 400 - Bad Request', () => {
+
+                it('Should respond with 400 and error message if passed invalid article ID', () => {
+                  return request
+                    .get('/api/articles/a')
+                    .expect(400)
+                    .then(({ body }) => {
+                      expect(body.msg).to.eql('Invalid article ID')
+                    });
+                });
+
+              });
 
             });
 

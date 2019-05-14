@@ -18,6 +18,7 @@ const getArticleById = (req, res, next) => {
     const { article_id } = req.params
     fetchArticleById(article_id)
         .then(article => {
+            if (!article.length) { return next({ code: 4041 }) }
             res.status(200).send({ article })
         })
         .catch(next)
