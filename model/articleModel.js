@@ -26,4 +26,12 @@ const fetchArticleById = (article_id) => {
 
 }
 
-module.exports = { fetchAllArticles, fetchArticleById }
+const updateVoteByArticleID = (article_id, inc_vote_by) => {
+    return connection('articles')
+        .where('articles.article_id', '=', article_id)
+        .increment('votes', inc_vote_by)
+        .returning('*')
+
+}
+
+module.exports = { fetchAllArticles, fetchArticleById, updateVoteByArticleID }

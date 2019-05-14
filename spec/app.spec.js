@@ -243,7 +243,65 @@ describe.only('THE API ENDPOINT', () => {
                     .get('/api/articles/a')
                     .expect(400)
                     .then(({ body }) => {
-                      expect(body.msg).to.eql('Invalid article ID')
+                      expect(body.msg).to.eql('Invalid character entered')
+                    });
+                });
+
+              });
+
+            });
+
+            describe('PATCH Request', () => {
+
+              describe('Status 200 - OK', () => {
+
+                it('Should increment vote by taking vote object and responding with updated article', () => {
+                  return request
+                    .patch('/api/articles/1')
+                    .send({ inc_vote_by: 1 })
+                    .expect(200)
+                    .then(({ body }) => {
+                      expect(body.updatedArticle).to.be.an('array');
+                      expect(body.updatedArticle.length).to.eql(1);
+                      expect(body.updatedArticle[0]).to.contain.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes')
+                      expect(body.updatedArticle[0].votes).to.eql(101)
+                    });
+                });
+
+                it('Should decrement vote by taking vote object and responding with updated article', () => {
+                  return request
+                    .patch('/api/articles/1')
+                    .send({ inc_vote_by: -1 })
+                    .expect(200)
+                    .then(({ body }) => {
+                      expect(body.updatedArticle).to.be.an('array');
+                      expect(body.updatedArticle.length).to.eql(1);
+                      expect(body.updatedArticle[0]).to.contain.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes')
+                      expect(body.updatedArticle[0].votes).to.eql(99)
+                    });
+                });
+
+              });
+
+              describe('Status 400 - Bad Request', () => {
+
+                it('Should respond with 400 and error message if passed invalid article ID', () => {
+                  return request
+                    .patch('/api/articles/10000')
+                    .send({ inc_vote_by: 1 })
+                    .expect(400)
+                    .then(({ body }) => {
+                      expect(body.msg).to.eql('Article does not exist')
+                    });
+                });
+
+                it('Should respond with 400 and error message if passed invalid vote', () => {
+                  return request
+                    .patch('/api/articles/1')
+                    .send({ inc_vote_by: 'a' })
+                    .expect(400)
+                    .then(({ body }) => {
+                      expect(body.msg).to.eql('Invalid character entered')
                     });
                 });
 

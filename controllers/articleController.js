@@ -1,4 +1,4 @@
-const { fetchAllArticles, fetchArticleById } = require('../model/articleModel')
+const { fetchAllArticles, fetchArticleById, updateVoteByArticleID } = require('../model/articleModel')
 
 const getAllArticles = (req, res, next) => {
     const orderBy = ['desc', 'asc']
@@ -24,4 +24,15 @@ const getArticleById = (req, res, next) => {
         .catch(next)
 }
 
-module.exports = { getAllArticles, getArticleById }
+const patchVoteByArticleById = (req, res, next) => {
+    const { article_id } = req.params
+    const { inc_vote_by } = req.body
+    updateVoteByArticleID(article_id, inc_vote_by)
+        .then(updatedArticle => {
+            if (!updatedArticle.length) { return next({ code: 4002 }) }
+            res.status(200).send({ updatedArticle })
+        })
+        .catch(next)
+}
+
+module.exports = { getAllArticles, getArticleById, patchVoteByArticleById }
