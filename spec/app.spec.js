@@ -71,6 +71,32 @@ describe.only('THE API ENDPOINT', () => {
 
     });
 
+    describe('THE ARTICLES ENDPOINT', () => {
+
+      describe('/articles', () => {
+
+        describe('GET Request', () => {
+
+          describe('Status 200 - OK', () => {
+
+            it('Responds with an array of article objects', () => {
+              return request
+                .get('/api/articles')
+                .expect(200)
+                .then(({ body }) => {
+                  expect(body.articles).to.be.an('array');
+                  expect(body.articles[0]).to.contain.keys('author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'comment_count')
+                });
+            });
+
+          });
+
+        });
+
+      });
+
+    });
+
   });
 
 });
