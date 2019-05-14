@@ -5,8 +5,6 @@ const supertest = require('supertest');
 const app = require('../app');
 const request = supertest(app)
 const connection = require('../db/connection');
-const topicData = require('../db/data/test-data/topics')
-
 
 describe.only('THE API ENDPOINT', () => {
   beforeEach(() => connection.seed.run());
@@ -27,6 +25,7 @@ describe.only('THE API ENDPOINT', () => {
             });
         });
 
+
       });
 
       describe('Status 404 - Not Found', () => {
@@ -40,7 +39,9 @@ describe.only('THE API ENDPOINT', () => {
             });
         });
 
+
       });
+
 
     });
 
@@ -60,14 +61,17 @@ describe.only('THE API ENDPOINT', () => {
                   expect(body.topics).to.be.an('array');
                   expect(body.topics[0]).to.contain.keys('slug', 'description')
                 });
-
             });
+
 
           });
 
+
         });
 
+
       });
+
 
     });
 
@@ -89,15 +93,21 @@ describe.only('THE API ENDPOINT', () => {
                 });
             });
 
+
           });
+
 
         });
 
+
       });
+
 
     });
 
+
   });
+
 
 });
 
