@@ -1,4 +1,4 @@
-const fetchAllArticles = require('../model/articleModel')
+const { fetchAllArticles, fetchArticleById } = require('../model/articleModel')
 
 const getAllArticles = (req, res, next) => {
     const orderBy = ['desc', 'asc']
@@ -14,4 +14,13 @@ const getAllArticles = (req, res, next) => {
         .catch(next)
 }
 
-module.exports = getAllArticles
+const getArticleById = (req, res, next) => {
+    const { article_id } = req.params
+    fetchArticleById(article_id)
+        .then(article => {
+            res.status(200).send({ article })
+        })
+        .catch(next)
+}
+
+module.exports = { getAllArticles, getArticleById }

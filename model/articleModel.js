@@ -14,4 +14,16 @@ const fetchAllArticles = (sort_by, order, author, topic) => {
         })
 }
 
-module.exports = fetchAllArticles
+const fetchArticleById = (article_id) => {
+
+    return connection
+        .select('articles.*')
+        .from('articles')
+        .count({ comment_count: 'comments.article_id' })
+        .leftJoin('comments', 'articles.article_id', '=', 'comments.article_id')
+        .groupBy('articles.article_id')
+        .where('articles.article_id', '=', article_id)
+
+}
+
+module.exports = { fetchAllArticles, fetchArticleById }

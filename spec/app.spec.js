@@ -203,6 +203,31 @@ describe.only('THE API ENDPOINT', () => {
 
           });
 
+          describe('/:article_id', () => {
+
+            describe('GET Request', () => {
+
+              describe('Status 200 - OK', () => {
+
+                it('Responds with a single article object when passed a valid article ID', () => {
+                  return request
+                    .get('/api/articles/1')
+                    .expect(200)
+                    .then(({ body }) => {
+                      expect(body.article).to.be.an('array');
+                      expect(body.article.length).to.eql(1);
+                      expect(body.article[0]).to.contain.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes', 'comment_count')
+                    });
+                });
+
+              });
+
+
+
+            });
+
+          });
+
         });
 
       });
