@@ -668,6 +668,19 @@ describe.only('THE API ENDPOINT', () => {
 
             });
 
+            describe('Status 404 - Not Found', () => {
+
+              it('Responds with a user object which should have username, avatar_url & name properties', () => {
+                return request
+                  .get('/api/users/invalid_username')
+                  .expect(404)
+                  .then(({ body }) => {
+                    expect(body.msg).to.eql('User not found');
+                  });
+
+              });
+            });
+
           });
 
         });

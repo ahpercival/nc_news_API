@@ -16,5 +16,6 @@ module.exports = {
     404: {
         4041: 'No articles found',
         4042: 'No comments found',
+        4043: 'User not found'
     }
 }
