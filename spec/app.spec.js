@@ -323,17 +323,57 @@ describe.only('THE API ENDPOINT', () => {
 
             });
 
-          });
+            describe('/comments', () => {
 
-          describe('/comments', () => {
+              describe('GET Request', () => {
 
-            describe('GET Request', () => {
+                describe('Status 200 - OK', () => {
 
-              describe('Status 200 - OK', () => {
+                  it('Responds with an array of comments for the given article_id', () => {
+                    return request
+                      .get('/api/articles/1/comments')
+                      .expect(200)
+                      .then(({ body }) => {
+                        expect(body.comments).to.be.an('array');
+                        body.comments.forEach(comment => {
+                          expect(comment).to.contain.keys('comment_id', 'votes', 'created_at', 'author', 'body')
+                        })
+                      });
+                  });
 
-                it('Responds with an array of comments for the given article_id', () => {
+                });
 
+                describe('Status 404 - Not Found', () => {
+                  it('Should respond with 404 and error message if article ID does not exist', () => {
+                    return request
+                      .get('/api/articles/10000/comments')
+                      .expect(404)
+                      .then(({ body }) => {
+                        expect(body.msg).to.eql('No comments found')
+                      })
+                  })
 
+                  it('Should respond with 404 and error message if passed invalid route', () => {
+                    return request
+                      .get('/api/articles/1/comment')
+                      .expect(404)
+                      .then(({ body }) => {
+                        expect(body.msg).to.eql('Route Not Found')
+                      })
+                  });
+
+                });
+
+                describe('Status 400 - Bad Request', () => {
+
+                  it('Should respond with 400 and error message if passed invalid article ID', () => {
+                    return request
+                      .get('/api/articles/invalid_id/comments')
+                      .expect(400)
+                      .then(({ body }) => {
+                        expect(body.msg).to.eql('Invalid character entered')
+                      })
+                  });
 
                 });
 
@@ -342,6 +382,7 @@ describe.only('THE API ENDPOINT', () => {
             });
 
           });
+
 
         });
 

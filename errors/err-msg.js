@@ -9,5 +9,8 @@ module.exports = {
         4002: 'Article does not exist'
     },
 
-    404: { 4041: 'No articles found' }
+    404: {
+        4041: 'No articles found',
+        4042: 'No comments found'
+    }
 }
