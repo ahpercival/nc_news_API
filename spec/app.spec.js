@@ -646,6 +646,36 @@ describe.only('THE API ENDPOINT', () => {
 
     });
 
+    describe('THE USERS ENDPOINT', () => {
+
+      describe('/users', () => {
+
+        describe('/:username', () => {
+
+          describe('GET Request', () => {
+
+            describe('Status 200 - OK', () => {
+
+              it('Responds with a user object which should have username, avatar_url & name properties', () => {
+                return request
+                  .get('/api/users/butter_bridge')
+                  .expect(200)
+                  .then(({ body }) => {
+                    expect(body.user).to.be.an('array');
+                    expect(body.user[0]).to.contain.keys('username', 'avatar_url', 'name')
+                  });
+              });
+
+            });
+
+          });
+
+        });
+
+      });
+
+    });
+
   });
 
 
