@@ -528,6 +528,39 @@ describe.only('THE API ENDPOINT', () => {
 
     });
 
+    describe('THE COMMENTS ENDPOINT', () => {
+
+      describe('/comments', () => {
+
+        describe('/:comment_id', () => {
+
+          describe('PATCH Request', () => {
+
+            describe('Status 200 - OK', () => {
+
+              it('Should increment vote by taking vote object and responding with updated comment', () => {
+                return request
+                  .patch('/api/comments/1')
+                  .send({ inc_vote_by: 1 })
+                  .expect(200)
+                  .then(({ body }) => {
+                    expect(body.updatedComment).to.be.an('array');
+                    expect(body.updatedComment.length).to.eql(1);
+                    expect(body.updatedComment[0]).to.contain.keys('comment_id', 'author', 'article_id', 'votes', 'created_at', 'body')
+                    expect(body.updatedComment[0].votes).to.eql(17)
+                  });
+              });
+
+            });
+
+          });
+
+        });
+
+      });
+
+
+    });
 
   });
 

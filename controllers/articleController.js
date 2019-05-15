@@ -30,7 +30,7 @@ const getArticleById = (req, res, next) => {
         .catch(next)
 }
 
-const patchVoteByArticleById = (req, res, next) => {
+const patchVoteByArticleId = (req, res, next) => {
     const { article_id } = req.params
     const { inc_vote_by } = req.body
     updateVoteByArticleID(article_id, inc_vote_by)
@@ -66,7 +66,7 @@ const postNewComment = (req, res, next) => {
 module.exports = {
     getAllArticles,
     getArticleById,
-    patchVoteByArticleById,
+    patchVoteByArticleId,
     getArticleCommentsById,
     postNewComment
 }
