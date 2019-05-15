@@ -9,7 +9,8 @@ module.exports = {
     400: {
         4001: 'Invalid order request',
         4002: 'Article does not exist',
-        4003: 'Please include comment'
+        4003: 'Please include comment',
+        4004: 'Comment not found'
     },
 
     404: {

@@ -256,9 +256,10 @@ describe.only('THE API ENDPOINT', () => {
               describe('Status 200 - OK', () => {
 
                 it('Should increment vote by taking vote object and responding with updated article', () => {
+                  const newVote = 1
                   return request
                     .patch('/api/articles/1')
-                    .send({ inc_vote_by: 1 })
+                    .send({ inc_votes: newVote })
                     .expect(200)
                     .then(({ body }) => {
                       expect(body.updatedArticle).to.be.an('array');
@@ -269,9 +270,10 @@ describe.only('THE API ENDPOINT', () => {
                 });
 
                 it('Should decrement vote by taking vote object and responding with updated article', () => {
+                  const newVote = -1
                   return request
                     .patch('/api/articles/1')
-                    .send({ inc_vote_by: -1 })
+                    .send({ inc_votes: newVote })
                     .expect(200)
                     .then(({ body }) => {
                       expect(body.updatedArticle).to.be.an('array');
@@ -282,9 +284,10 @@ describe.only('THE API ENDPOINT', () => {
                 });
 
                 it('Should not increment/decrement vote if object key is invalid', () => {
+                  const newVote = 100
                   return request
                     .patch('/api/articles/1')
-                    .send({ incorrect_key: 100 })
+                    .send({ incorrect_key: newVote })
                     .expect(200)
                     .then(({ body }) => {
                       expect(body.updatedArticle).to.be.an('array');
@@ -300,9 +303,10 @@ describe.only('THE API ENDPOINT', () => {
               describe('Status 400 - Bad Request', () => {
 
                 it('Should respond with 400 and error message if passed invalid article ID', () => {
+                  const newVote = 1
                   return request
                     .patch('/api/articles/10000')
-                    .send({ inc_vote_by: 1 })
+                    .send({ inc_votes: newVote })
                     .expect(400)
                     .then(({ body }) => {
                       expect(body.msg).to.eql('Article does not exist')
@@ -310,9 +314,10 @@ describe.only('THE API ENDPOINT', () => {
                 });
 
                 it('Should respond with 400 and error message if passed invalid object value', () => {
+                  const newVote = 'a'
                   return request
                     .patch('/api/articles/1')
-                    .send({ inc_vote_by: 'a' })
+                    .send({ inc_votes: newVote })
                     .expect(400)
                     .then(({ body }) => {
                       expect(body.msg).to.eql('Invalid character entered')
@@ -539,9 +544,10 @@ describe.only('THE API ENDPOINT', () => {
             describe('Status 200 - OK', () => {
 
               it('Should increment vote by taking vote object and responding with updated comment', () => {
+                const newVote = 1
                 return request
                   .patch('/api/comments/1')
-                  .send({ inc_vote_by: 1 })
+                  .send({ inc_votes: newVote })
                   .expect(200)
                   .then(({ body }) => {
                     expect(body.updatedComment).to.be.an('array');
@@ -549,6 +555,74 @@ describe.only('THE API ENDPOINT', () => {
                     expect(body.updatedComment[0]).to.contain.keys('comment_id', 'author', 'article_id', 'votes', 'created_at', 'body')
                     expect(body.updatedComment[0].votes).to.eql(17)
                   });
+              });
+
+              it('Should decrement vote by taking vote object and responding with updated comment', () => {
+                const newVote = -1
+                return request
+                  .patch('/api/comments/1')
+                  .send({ inc_votes: newVote })
+                  .expect(200)
+                  .then(({ body }) => {
+                    expect(body.updatedComment).to.be.an('array');
+                    expect(body.updatedComment.length).to.eql(1);
+                    expect(body.updatedComment[0]).to.contain.keys('comment_id', 'author', 'article_id', 'votes', 'created_at', 'body')
+                    expect(body.updatedComment[0].votes).to.eql(15)
+                  });
+              });
+
+              it('Should return comment with unchanged vote if body key is invalid', () => {
+                const newVote = 1
+                return request
+                  .patch('/api/comments/1')
+                  .send({ invalid_key: newVote })
+                  .expect(200)
+                  .then(({ body }) => {
+                    expect(body.updatedComment).to.be.an('array');
+                    expect(body.updatedComment.length).to.eql(1);
+                    expect(body.updatedComment[0]).to.contain.keys('comment_id', 'author', 'article_id', 'votes', 'created_at', 'body')
+                    expect(body.updatedComment[0].votes).to.eql(16)
+                  });
+              });
+
+            });
+
+            describe('Status 400 - Bad Request', () => {
+
+              it('Should return 400 and error message if passed invalid vote', () => {
+                const newVote = 'invalid_vote'
+                return request
+                  .patch('/api/comments/1')
+                  .send({ inc_votes: newVote })
+                  .expect(400)
+                  .then(({ body }) => {
+                    expect(body.msg).to.eql('Invalid character entered')
+                  });
+              });
+
+              it('Should return 400 and error message if passed invalid comment ID', () => {
+                const newVote = 1
+                return request
+                  .patch('/api/comments/100000')
+                  .send({ inc_votes: newVote })
+                  .expect(400)
+                  .then(({ body }) => {
+                    expect(body.msg).to.eql('Comment not found')
+                  });
+              });
+
+            });
+
+          });
+
+          describe('DELETE Request', () => {
+
+            describe('Status 204 - No Content', () => {
+
+              it('Should delete the given comment by comment_id & respond with status 204 and no content', () => {
+                return request
+                  .delete('/api/comments/1')
+                  .expect(204)
               });
 
             });

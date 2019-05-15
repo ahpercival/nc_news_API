@@ -1,10 +1,16 @@
 const connection = require('../db/connection')
 
-const updateVoteByCommentId = (comment_id, inc_vote_by) => {
+const updateVoteByCommentId = (comment_id, inc_votes = 0) => {
     return connection('comments')
         .where('comments.comment_id', '=', comment_id)
-        .increment('votes', inc_vote_by)
+        .increment('votes', inc_votes)
         .returning('*')
 }
 
-module.exports = updateVoteByCommentId
+const removeCommentById = (comment_id) => {
+    return connection('comments')
+        .where('comments.comment_id', '=', comment_id)
+        .del()
+}
+
+module.exports = { updateVoteByCommentId, removeCommentById }

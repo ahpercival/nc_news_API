@@ -32,8 +32,8 @@ const getArticleById = (req, res, next) => {
 
 const patchVoteByArticleId = (req, res, next) => {
     const { article_id } = req.params
-    const { inc_vote_by } = req.body
-    updateVoteByArticleID(article_id, inc_vote_by)
+    const { inc_votes } = req.body
+    updateVoteByArticleID(article_id, inc_votes)
         .then(updatedArticle => {
             if (!updatedArticle.length) { return next({ code: 4002 }) }
             res.status(200).send({ updatedArticle })
