@@ -627,6 +627,16 @@ describe.only('THE API ENDPOINT', () => {
 
             });
 
+            describe('Status 400 - Bad Request', () => {
+
+              it('Should return 400 and no content if article ID is invalid', () => {
+                return request
+                  .delete('/api/comments/invalid')
+                  .expect(400)
+              });
+
+            });
+
           });
 
         });
