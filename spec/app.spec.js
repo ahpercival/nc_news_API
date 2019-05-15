@@ -341,12 +341,52 @@ describe.only('THE API ENDPOINT', () => {
                       });
                   });
 
+                  it('Comments should be sorted by created_at in descending order by default', () => {
+                    return request
+                      .get('/api/articles/1/comments')
+                      .expect(200)
+                      .then(({ body }) => {
+                        expect(body.comments).to.be.descendingBy('created_at')
+                      });
+                  });
+
+                  it('Should sort articles by any valid column passed in query', () => {
+                    return request
+                      .get('/api/articles/1/comments?sort_by=author')
+                      .expect(200)
+                      .then(({ body }) => {
+                        expect(body.comments).to.be.descendingBy('author')
+                      });
+                  });
+
+                  it('Should order articles in ascending order when specified in query', () => {
+                    return request
+                      .get('/api/articles/1/comments?order=asc')
+                      .expect(200)
+                      .then(({ body }) => {
+                        expect(body.comments).to.be.ascendingBy('created_at')
+                      });
+                  });
+
+                  it('Should return article comments sorted by default when passed query with invalid query key', () => {
+                    return request
+                      .get('/api/articles/1/comments?invalid_query=author')
+                      .expect(200)
+                      .then(({ body }) => {
+                        expect(body.comments).to.be.an('array');
+                        body.comments.forEach(comment => {
+                          expect(comment).to.contain.keys('comment_id', 'votes', 'created_at', 'author', 'body')
+                        })
+                      });
+                  });
+
+
                 });
 
                 describe('Status 404 - Not Found', () => {
                   it('Should respond with 404 and error message if article ID does not exist', () => {
                     return request
-                      .get('/api/articles/10000/comments')
+                      .get('/api/articles/1000/comments')
                       .expect(404)
                       .then(({ body }) => {
                         expect(body.msg).to.eql('No comments found')
@@ -373,6 +413,15 @@ describe.only('THE API ENDPOINT', () => {
                       .then(({ body }) => {
                         expect(body.msg).to.eql('Invalid character entered')
                       })
+                  });
+
+                  it('Should respond with 400 and error message when passed invalid column', () => {
+                    return request
+                      .get('/api/articles/1/comments?sort_by=invalid_column')
+                      .expect(400)
+                      .then(({ body }) => {
+                        expect(body.msg).to.eql('Unable to sort - Invalid column')
+                      });
                   });
 
                 });

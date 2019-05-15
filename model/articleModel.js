@@ -34,11 +34,12 @@ const updateVoteByArticleID = (article_id, inc_vote_by = 0) => {
 
 }
 
-const fetchArticleCommentsById = (article_id) => {
+const fetchArticleCommentsById = (article_id, sort_by, order) => {
     return connection
         .select('*')
         .from('comments')
         .where('comments.article_id', '=', article_id)
+        .orderBy(sort_by || 'comments.created_at', order || 'desc')
 }
 
 module.exports = { fetchAllArticles, fetchArticleById, updateVoteByArticleID, fetchArticleCommentsById }

@@ -37,7 +37,8 @@ const patchVoteByArticleById = (req, res, next) => {
 
 const getArticleCommentsById = (req, res, next) => {
     const { article_id } = req.params
-    fetchArticleCommentsById(article_id)
+    const { sort_by, order } = req.query
+    fetchArticleCommentsById(article_id, sort_by, order)
         .then(comments => {
             if (!comments.length) { return next({ code: 4042 }) }
             res.status(200).send({ comments })
