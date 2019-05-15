@@ -7,7 +7,7 @@ exports.up = function (knex, Promise) {
         commentsTable.integer('article_id').notNullable();
         commentsTable.foreign('article_id').references('articles.article_id')
         commentsTable.integer('votes').defaultTo(0).notNullable();
-        commentsTable.timestamp('created_at', { useTz: true })
+        commentsTable.timestamp('created_at', { useTz: true }).defaultTo(knex.fn.now())
         commentsTable.text('body').notNullable();
     })
 };

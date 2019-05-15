@@ -428,6 +428,31 @@ describe.only('THE API ENDPOINT', () => {
 
               });
 
+              describe('POST Request', () => {
+
+                describe('Status 200 - OK', () => {
+
+                  it('Responds with new comment when passed object with username & body properties', () => {
+                    const newComment = { username: 'butter_bridge', body: 'hello' }
+                    const articleID = 1
+                    return request
+                      .post(`/api/articles/${articleID}/comments`)
+                      .send(newComment)
+                      .expect(200)
+                      .then(({ body }) => {
+                        expect(body.newComment).to.be.an('array')
+                        expect(body.newComment[0]).to.contain.keys('comment_id', 'author', 'article_id', 'votes', 'created_at', 'body')
+                        expect(body.newComment[0].author).to.eql('butter_bridge')
+                        expect(body.newComment[0].body).to.eql('hello')
+                        expect(body.newComment[0].article_id).to.eql(articleID)
+                      })
+
+                  });
+
+                });
+
+              });
+
             });
 
           });

@@ -42,4 +42,15 @@ const fetchArticleCommentsById = (article_id, sort_by, order) => {
         .orderBy(sort_by || 'comments.created_at', order || 'desc')
 }
 
-module.exports = { fetchAllArticles, fetchArticleById, updateVoteByArticleID, fetchArticleCommentsById }
+const addNewComment = (article_id, username, body) => {
+    const newComment = {}
+    newComment.author = username
+    newComment.body = body
+    newComment.article_id = article_id
+
+    return connection('comments')
+        .insert(newComment)
+        .returning('*')
+}
+
+module.exports = { fetchAllArticles, fetchArticleById, updateVoteByArticleID, fetchArticleCommentsById, addNewComment }
