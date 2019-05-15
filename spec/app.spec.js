@@ -281,6 +281,20 @@ describe.only('THE API ENDPOINT', () => {
                     });
                 });
 
+                it('Should not increment/decrement vote if object key is invalid', () => {
+                  return request
+                    .patch('/api/articles/1')
+                    .send({ incorrect_key: 100 })
+                    .expect(200)
+                    .then(({ body }) => {
+                      expect(body.updatedArticle).to.be.an('array');
+                      expect(body.updatedArticle.length).to.eql(1);
+                      expect(body.updatedArticle[0]).to.contain.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes')
+                      expect(body.updatedArticle[0].votes).to.eql(100)
+                    });
+                });
+
+
               });
 
               describe('Status 400 - Bad Request', () => {
@@ -295,7 +309,7 @@ describe.only('THE API ENDPOINT', () => {
                     });
                 });
 
-                it('Should respond with 400 and error message if passed invalid vote', () => {
+                it('Should respond with 400 and error message if passed invalid object value', () => {
                   return request
                     .patch('/api/articles/1')
                     .send({ inc_vote_by: 'a' })
@@ -303,6 +317,24 @@ describe.only('THE API ENDPOINT', () => {
                     .then(({ body }) => {
                       expect(body.msg).to.eql('Invalid character entered')
                     });
+                });
+
+              });
+
+            });
+
+          });
+
+          describe('/comments', () => {
+
+            describe('GET Request', () => {
+
+              describe('Status 200 - OK', () => {
+
+                it('Responds with an array of comments for the given article_id', () => {
+
+
+
                 });
 
               });
