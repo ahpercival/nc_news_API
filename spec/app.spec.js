@@ -446,7 +446,70 @@ describe.only('THE API ENDPOINT', () => {
                         expect(body.newComment[0].body).to.eql('hello')
                         expect(body.newComment[0].article_id).to.eql(articleID)
                       })
+                  });
 
+                });
+
+                describe('Status 400 - Bad Request', () => {
+
+                  it('Should respond with 400 and error message if user does not exist in user table', () => {
+                    const newComment = { username: 'Adrian', body: 'hello' }
+                    const articleID = 1
+                    return request
+                      .post(`/api/articles/${articleID}/comments`)
+                      .send(newComment)
+                      .expect(400)
+                      .then(({ body }) => {
+                        expect(body.msg).to.eql('Unable to post comment')
+                      })
+                  });
+
+                  it("Should respond with 400 and error message if article doesn't exist", () => {
+                    const newComment = { username: 'butter_bridge', body: 'hello' }
+                    const articleID = 10000
+                    return request
+                      .post(`/api/articles/${articleID}/comments`)
+                      .send(newComment)
+                      .expect(400)
+                      .then(({ body }) => {
+                        expect(body.msg).to.eql('Unable to post comment')
+                      })
+                  });
+
+                  it("Should respond with 400 and error message if comment does not have username", () => {
+                    const newComment = { username: 'butter_bridge' }
+                    const articleID = 1
+                    return request
+                      .post(`/api/articles/${articleID}/comments`)
+                      .send(newComment)
+                      .expect(400)
+                      .then(({ body }) => {
+                        expect(body.msg).to.eql('Missing information - please enter valid username & comment')
+                      })
+                  });
+
+                  it("Should respond with 400 and error message if comment does not have body", () => {
+                    const newComment = { body: 'hello' }
+                    const articleID = 1
+                    return request
+                      .post(`/api/articles/${articleID}/comments`)
+                      .send(newComment)
+                      .expect(400)
+                      .then(({ body }) => {
+                        expect(body.msg).to.eql('Missing information - please enter valid username & comment')
+                      })
+                  });
+
+                  it("Should respond with 400 and error message if body is empty", () => {
+                    const newComment = { username: 'butter_bridge', body: '' }
+                    const articleID = 1
+                    return request
+                      .post(`/api/articles/${articleID}/comments`)
+                      .send(newComment)
+                      .expect(400)
+                      .then(({ body }) => {
+                        expect(body.msg).to.eql('Please include comment')
+                      })
                   });
 
                 });

@@ -53,4 +53,10 @@ const addNewComment = (article_id, username, body) => {
         .returning('*')
 }
 
-module.exports = { fetchAllArticles, fetchArticleById, updateVoteByArticleID, fetchArticleCommentsById, addNewComment }
+module.exports = {
+    fetchAllArticles,
+    fetchArticleById,
+    updateVoteByArticleID,
+    fetchArticleCommentsById,
+    addNewComment
+}

@@ -1,4 +1,10 @@
-const { fetchAllArticles, fetchArticleById, updateVoteByArticleID, fetchArticleCommentsById, addNewComment } = require('../model/articleModel')
+const {
+    fetchAllArticles,
+    fetchArticleById,
+    updateVoteByArticleID,
+    fetchArticleCommentsById,
+    addNewComment
+} = require('../model/articleModel')
 
 const getAllArticles = (req, res, next) => {
     const orderBy = ['desc', 'asc']
@@ -51,9 +57,16 @@ const postNewComment = (req, res, next) => {
     const { username, body } = req.body
     addNewComment(article_id, username, body)
         .then(newComment => {
+            if (!newComment[0].body.length) { return Promise.reject({ code: 4003 }) }
             res.status(200).send({ newComment })
         })
         .catch(next)
 }
 
-module.exports = { getAllArticles, getArticleById, patchVoteByArticleById, getArticleCommentsById, postNewComment }
+module.exports = {
+    getAllArticles,
+    getArticleById,
+    patchVoteByArticleById,
+    getArticleCommentsById,
+    postNewComment
+}
