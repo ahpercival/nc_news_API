@@ -44,6 +44,23 @@ describe('THE API ENDPOINT', () => {
 
       });
 
+      describe('UNAUTHORISED Request', () => {
+
+        describe('Status 405 - Method Not Allowed', () => {
+
+          it('Responds with 405 and error message', () => {
+            return request
+              .put('/api')
+              .expect(405)
+              .then(({ body }) => {
+                expect(body.msg).to.eql('Method Not Allowed');
+              });
+          });
+
+        });
+
+      });
+
     });
 
     describe('THE TOPICS ENDPOINT', () => {
@@ -67,6 +84,24 @@ describe('THE API ENDPOINT', () => {
           });
 
         });
+
+        describe('UNAUTHORISED Request', () => {
+
+          describe('Status 405 - Method Not Allowed', () => {
+
+            it('Responds with 405 and error message', () => {
+              return request
+                .put('/api/topics')
+                .expect(405)
+                .then(({ body }) => {
+                  expect(body.msg).to.eql('Method Not Allowed');
+                });
+            });
+
+          });
+
+        });
+
 
       });
 
@@ -426,7 +461,7 @@ describe('THE API ENDPOINT', () => {
 
               describe('POST Request', () => {
 
-                describe('Status 200 - OK', () => {
+                describe('Status 201 - Created', () => {
 
                   it('Responds with new comment when passed object with username & body properties', () => {
                     const newComment = { username: 'butter_bridge', body: 'hello' }
@@ -451,18 +486,6 @@ describe('THE API ENDPOINT', () => {
                   it('Should respond with 400 and error message if user does not exist in user table', () => {
                     const newComment = { username: 'Adrian', body: 'hello' }
                     const articleID = 1
-                    return request
-                      .post(`/api/articles/${articleID}/comments`)
-                      .send(newComment)
-                      .expect(400)
-                      .then(({ body }) => {
-                        expect(body.msg).to.eql('Unable to post comment')
-                      })
-                  });
-
-                  it("Should respond with 400 and error message if article doesn't exist", () => {
-                    const newComment = { username: 'butter_bridge', body: 'hello' }
-                    const articleID = 10000
                     return request
                       .post(`/api/articles/${articleID}/comments`)
                       .send(newComment)
@@ -510,12 +533,63 @@ describe('THE API ENDPOINT', () => {
 
                 });
 
+                describe('Status 404 - Not Found', () => {
+
+                  it("Should respond with 404 and error message if article doesn't exist", () => {
+                    const newComment = { username: 'butter_bridge', body: 'hello' }
+                    const articleID = 10000
+                    return request
+                      .post(`/api/articles/${articleID}/comments`)
+                      .send(newComment)
+                      .expect(404)
+                      .then(({ body }) => {
+                        expect(body.msg).to.eql('Unable to post comment')
+                      })
+                  });
+
+                });
+
               });
 
             });
 
           });
 
+
+        });
+
+        describe('UNAUTHORISED Request', () => {
+
+          describe('Status 405 - Method Not Allowed', () => {
+
+            it('Responds with 405 and error message', () => {
+              return request
+                .put('/api/articles')
+                .expect(405)
+                .then(({ body }) => {
+                  expect(body.msg).to.eql('Method Not Allowed');
+                });
+            });
+
+            it('Responds with 405 and error message', () => {
+              return request
+                .put('/api/articles/:article_id')
+                .expect(405)
+                .then(({ body }) => {
+                  expect(body.msg).to.eql('Method Not Allowed');
+                });
+            });
+
+            it('Responds with 405 and error message', () => {
+              return request
+                .put('/api/articles/:article_id/comments')
+                .expect(405)
+                .then(({ body }) => {
+                  expect(body.msg).to.eql('Method Not Allowed');
+                });
+            });
+
+          });
 
         });
 
@@ -541,10 +615,9 @@ describe('THE API ENDPOINT', () => {
                   .send({ inc_votes: newVote })
                   .expect(200)
                   .then(({ body }) => {
-                    expect(body.updatedComment).to.be.an('array');
-                    expect(body.updatedComment.length).to.eql(1);
-                    expect(body.updatedComment[0]).to.contain.keys('comment_id', 'author', 'article_id', 'votes', 'created_at', 'body')
-                    expect(body.updatedComment[0].votes).to.eql(17)
+                    expect(body).to.be.an('object');
+                    expect(body.comment).to.contain.keys('comment_id', 'author', 'article_id', 'votes', 'created_at', 'body')
+                    expect(body.comment.votes).to.eql(17)
                   });
               });
 
@@ -555,10 +628,9 @@ describe('THE API ENDPOINT', () => {
                   .send({ inc_votes: newVote })
                   .expect(200)
                   .then(({ body }) => {
-                    expect(body.updatedComment).to.be.an('array');
-                    expect(body.updatedComment.length).to.eql(1);
-                    expect(body.updatedComment[0]).to.contain.keys('comment_id', 'author', 'article_id', 'votes', 'created_at', 'body')
-                    expect(body.updatedComment[0].votes).to.eql(15)
+                    expect(body).to.be.an('object');
+                    expect(body.comment).to.contain.keys('comment_id', 'author', 'article_id', 'votes', 'created_at', 'body')
+                    expect(body.comment.votes).to.eql(15)
                   });
               });
 
@@ -569,10 +641,9 @@ describe('THE API ENDPOINT', () => {
                   .send({ invalid_key: newVote })
                   .expect(200)
                   .then(({ body }) => {
-                    expect(body.updatedComment).to.be.an('array');
-                    expect(body.updatedComment.length).to.eql(1);
-                    expect(body.updatedComment[0]).to.contain.keys('comment_id', 'author', 'article_id', 'votes', 'created_at', 'body')
-                    expect(body.updatedComment[0].votes).to.eql(16)
+                    expect(body).to.be.an('object');
+                    expect(body.comment).to.contain.keys('comment_id', 'author', 'article_id', 'votes', 'created_at', 'body')
+                    expect(body.comment.votes).to.eql(16)
                   });
               });
 
@@ -591,14 +662,18 @@ describe('THE API ENDPOINT', () => {
                   });
               });
 
-              it('Should return 400 and error message if passed invalid comment ID', () => {
+            });
+
+            describe('Status 404 - Not Found', () => {
+
+              it('Should return 404 and error message if passed invalid comment ID', () => {
                 const newVote = 1
                 return request
                   .patch('/api/comments/100000')
                   .send({ inc_votes: newVote })
-                  .expect(400)
+                  .expect(404)
                   .then(({ body }) => {
-                    expect(body.msg).to.eql('Comment not found')
+                    expect(body.msg).to.eql('No comments found')
                   });
               });
 
@@ -624,8 +699,41 @@ describe('THE API ENDPOINT', () => {
                 return request
                   .delete('/api/comments/invalid')
                   .expect(400)
+                  .then(({ body }) => {
+                    expect(body.msg).to.eql('Invalid character entered')
+                  });
               });
 
+            });
+
+            describe('Status 404 - Not Found', () => {
+
+              it("Should return 404 and no content if article ID doesn't exist", () => {
+                return request
+                  .delete('/api/comments/1000')
+                  .expect(404)
+                  .then(({ body }) => {
+                    expect(body.msg).to.eql('No comments found')
+                  });
+              });
+
+            });
+
+          });
+
+        });
+
+        describe('UNAUTHORISED Request', () => {
+
+          describe('Status 405 - Method Not Allowed', () => {
+
+            it('Responds with 405 and error message', () => {
+              return request
+                .put('/api/comments/:comment_id')
+                .expect(405)
+                .then(({ body }) => {
+                  expect(body.msg).to.eql('Method Not Allowed');
+                });
             });
 
           });
@@ -652,8 +760,8 @@ describe('THE API ENDPOINT', () => {
                   .get('/api/users/butter_bridge')
                   .expect(200)
                   .then(({ body }) => {
-                    expect(body.user).to.be.an('array');
-                    expect(body.user[0]).to.contain.keys('username', 'avatar_url', 'name')
+                    expect(body.user).to.be.an('object');
+                    expect(body.user).to.contain.keys('username', 'avatar_url', 'name')
                   });
               });
 
@@ -670,6 +778,23 @@ describe('THE API ENDPOINT', () => {
                   });
 
               });
+            });
+
+          });
+
+        });
+
+        describe('UNAUTHORISED Request', () => {
+
+          describe('Status 405 - Method Not Allowed', () => {
+
+            it('Responds with 405 and error message', () => {
+              return request
+                .put('/api/users/:username')
+                .expect(405)
+                .then(({ body }) => {
+                  expect(body.msg).to.eql('Method Not Allowed');
+                });
             });
 
           });

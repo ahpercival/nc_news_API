@@ -9,7 +9,10 @@ exports.methodNotAllowed = (req, res) => {
 };
 
 exports.handlePsqlErrors = (err, req, res, next) => {
-  if (errMsg.PSQL[err.code]) {
+  if (errMsg.PSQL[err.code] && err.detail === 'Key (article_id)=(10000) is not present in table "articles".') {
+    res.status(404).send({ msg: errMsg.PSQL[err.code] })
+  }// <<<<REVIEW & REFACTOR THIS<<<
+  else if (errMsg.PSQL[err.code]) {
     res.status(400).send({ msg: errMsg.PSQL[err.code] })
   } else next(err)
 }

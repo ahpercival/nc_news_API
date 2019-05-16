@@ -56,7 +56,10 @@ const getArticleCommentsById = (req, res, next) => {
 const postNewComment = (req, res, next) => {
     const { article_id } = req.params
     const { username, body } = req.body
-    addNewComment(article_id, username, body)
+    const author = username
+    const newComment = { author, body, article_id }
+
+    addNewComment(newComment)
         .then(([comment]) => {
             if (!comment.body.length) { return Promise.reject({ code: 4003 }) }
             res.status(201).send({ comment })

@@ -42,12 +42,7 @@ const fetchArticleCommentsById = (article_id, sort_by, order) => {
         .orderBy(sort_by || 'comments.created_at', order || 'desc')
 }
 
-const addNewComment = (article_id, username, body) => {
-    const newComment = {}
-    newComment.author = username
-    newComment.body = body
-    newComment.article_id = article_id
-
+const addNewComment = (newComment) => {
     return connection('comments')
         .insert(newComment)
         .returning('*')

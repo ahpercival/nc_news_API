@@ -1,4 +1,5 @@
 const articlesRouter = require('express').Router();
+const { methodNotAllowed } = require('../errors/index')
 const {
     getAllArticles,
     getArticleById,
@@ -11,16 +12,18 @@ const {
 articlesRouter
     .route('/')
     .get(getAllArticles)
-//.all(methodNotAllowed*) * create 405 error function & require in
+    .all(methodNotAllowed)
 
 articlesRouter
     .route('/:article_id')
     .get(getArticleById)
     .patch(patchVoteByArticleId)
+    .all(methodNotAllowed)
 
 articlesRouter
     .route('/:article_id/comments')
     .get(getArticleCommentsById)
     .post(postNewComment)
+    .all(methodNotAllowed)
 
 module.exports = articlesRouter
