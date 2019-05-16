@@ -44,19 +44,20 @@ describe('THE API ENDPOINT', () => {
 
       });
 
-      describe('UNAUTHORISED Request', () => {
 
-        describe('Status 405 - Method Not Allowed', () => {
+    });
 
-          it('Responds with 405 and error message', () => {
-            return request
-              .put('/api')
-              .expect(405)
-              .then(({ body }) => {
-                expect(body.msg).to.eql('Method Not Allowed');
-              });
-          });
+    describe('UNAUTHORISED Request', () => {
 
+      describe('Status 405 - Method Not Allowed', () => {
+
+        it('Responds with 405 and error message', () => {
+          return request
+            .put('/api')
+            .expect(405)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Method Not Allowed');
+            });
         });
 
       });
@@ -362,6 +363,23 @@ describe('THE API ENDPOINT', () => {
 
             });
 
+            describe('UNAUTHORISED Request', () => {
+
+              describe('Status 405 - Method Not Allowed', () => {
+
+                it('Responds with 405 and error message', () => {
+                  return request
+                    .put('/api/articles/1')
+                    .expect(405)
+                    .then(({ body }) => {
+                      expect(body.msg).to.eql('Method Not Allowed');
+                    });
+                });
+
+              });
+
+            });
+
             describe('/comments', () => {
 
               describe('GET Request', () => {
@@ -551,6 +569,23 @@ describe('THE API ENDPOINT', () => {
 
               });
 
+              describe('UNAUTHORISED Request', () => {
+
+                describe('Status 405 - Method Not Allowed', () => {
+
+                  it('Responds with 405 and error message', () => {
+                    return request
+                      .put('/api/articles/1/comments')
+                      .expect(405)
+                      .then(({ body }) => {
+                        expect(body.msg).to.eql('Method Not Allowed');
+                      });
+                  });
+
+                });
+
+              });
+
             });
 
           });
@@ -565,24 +600,6 @@ describe('THE API ENDPOINT', () => {
             it('Responds with 405 and error message', () => {
               return request
                 .put('/api/articles')
-                .expect(405)
-                .then(({ body }) => {
-                  expect(body.msg).to.eql('Method Not Allowed');
-                });
-            });
-
-            it('Responds with 405 and error message', () => {
-              return request
-                .put('/api/articles/:article_id')
-                .expect(405)
-                .then(({ body }) => {
-                  expect(body.msg).to.eql('Method Not Allowed');
-                });
-            });
-
-            it('Responds with 405 and error message', () => {
-              return request
-                .put('/api/articles/:article_id/comments')
                 .expect(405)
                 .then(({ body }) => {
                   expect(body.msg).to.eql('Method Not Allowed');
@@ -729,7 +746,7 @@ describe('THE API ENDPOINT', () => {
 
             it('Responds with 405 and error message', () => {
               return request
-                .put('/api/comments/:comment_id')
+                .put('/api/comments/1')
                 .expect(405)
                 .then(({ body }) => {
                   expect(body.msg).to.eql('Method Not Allowed');
@@ -790,7 +807,7 @@ describe('THE API ENDPOINT', () => {
 
             it('Responds with 405 and error message', () => {
               return request
-                .put('/api/users/:username')
+                .put('/api/users/butter_bridge')
                 .expect(405)
                 .then(({ body }) => {
                   expect(body.msg).to.eql('Method Not Allowed');
