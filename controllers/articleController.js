@@ -34,9 +34,11 @@ const patchVoteByArticleId = (req, res, next) => {
     const { article_id } = req.params
     const { inc_votes } = req.body
     updateVoteByArticleID(article_id, inc_votes)
-        .then(updatedArticle => {
-            if (!updatedArticle.length) { return next({ code: 4002 }) }
-            res.status(200).send({ updatedArticle })
+        .then(([updatedArticle]) => {
+            const article = {}
+            article.article = updatedArticle
+            if (!updatedArticle) { return next({ code: 4002 }) }
+            res.status(200).send(article)
         })
         .catch(next)
 }
@@ -55,9 +57,9 @@ const postNewComment = (req, res, next) => {
     const { article_id } = req.params
     const { username, body } = req.body
     addNewComment(article_id, username, body)
-        .then(newComment => {
-            if (!newComment[0].body.length) { return Promise.reject({ code: 4003 }) }
-            res.status(201).send({ newComment })
+        .then(([comment]) => {
+            if (!comment.body.length) { return Promise.reject({ code: 4003 }) }
+            res.status(201).send({ comment })
         })
         .catch(next)
 }

@@ -204,7 +204,7 @@ describe('THE API ENDPOINT', () => {
 
           describe('/:article_id', () => {
 
-            describe.only('GET Request', () => {
+            describe('GET Request', () => {
 
               describe('Status 200 - OK', () => {
 
@@ -261,10 +261,10 @@ describe('THE API ENDPOINT', () => {
                     .send({ inc_votes: newVote })
                     .expect(200)
                     .then(({ body }) => {
-                      expect(body.updatedArticle).to.be.an('array');
-                      expect(body.updatedArticle.length).to.eql(1);
-                      expect(body.updatedArticle[0]).to.contain.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes')
-                      expect(body.updatedArticle[0].votes).to.eql(101)
+                      expect(body).to.be.an('object')
+                      expect(body).to.contain.keys('article')
+                      expect(body.article).to.contain.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes')
+                      expect(body.article.votes).to.eql(101)
                     });
                 });
 
@@ -275,10 +275,10 @@ describe('THE API ENDPOINT', () => {
                     .send({ inc_votes: newVote })
                     .expect(200)
                     .then(({ body }) => {
-                      expect(body.updatedArticle).to.be.an('array');
-                      expect(body.updatedArticle.length).to.eql(1);
-                      expect(body.updatedArticle[0]).to.contain.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes')
-                      expect(body.updatedArticle[0].votes).to.eql(99)
+                      expect(body).to.be.an('object')
+                      expect(body).to.contain.keys('article')
+                      expect(body.article).to.contain.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes')
+                      expect(body.article.votes).to.eql(99)
                     });
                 });
 
@@ -289,10 +289,10 @@ describe('THE API ENDPOINT', () => {
                     .send({ incorrect_key: newVote })
                     .expect(200)
                     .then(({ body }) => {
-                      expect(body.updatedArticle).to.be.an('array');
-                      expect(body.updatedArticle.length).to.eql(1);
-                      expect(body.updatedArticle[0]).to.contain.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes')
-                      expect(body.updatedArticle[0].votes).to.eql(100)
+                      expect(body).to.be.an('object')
+                      expect(body).to.contain.keys('article')
+                      expect(body.article).to.contain.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes')
+                      expect(body.article.votes).to.eql(100)
                     });
                 });
 
@@ -436,11 +436,11 @@ describe('THE API ENDPOINT', () => {
                       .send(newComment)
                       .expect(201)
                       .then(({ body }) => {
-                        expect(body.newComment).to.be.an('array')
-                        expect(body.newComment[0]).to.contain.keys('comment_id', 'author', 'article_id', 'votes', 'created_at', 'body')
-                        expect(body.newComment[0].author).to.eql('butter_bridge')
-                        expect(body.newComment[0].body).to.eql('hello')
-                        expect(body.newComment[0].article_id).to.eql(articleID)
+                        expect(body).to.be.an('object')
+                        expect(body.comment).to.contain.keys('comment_id', 'author', 'article_id', 'votes', 'created_at', 'body')
+                        expect(body.comment.author).to.eql('butter_bridge')
+                        expect(body.comment.body).to.eql('hello')
+                        expect(body.comment.article_id).to.eql(articleID)
                       })
                   });
 

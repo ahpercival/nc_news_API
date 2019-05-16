@@ -36,7 +36,7 @@ const updateVoteByArticleID = (article_id, inc_votes = 0) => {
 
 const fetchArticleCommentsById = (article_id, sort_by, order) => {
     return connection
-        .select('*')
+        .select('comments.comment_id', 'comments.votes', 'comments.created_at', 'comments.author', 'comments.body')
         .from('comments')
         .where('comments.article_id', '=', article_id)
         .orderBy(sort_by || 'comments.created_at', order || 'desc')

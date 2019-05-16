@@ -11,6 +11,7 @@ const {
 articlesRouter
     .route('/')
     .get(getAllArticles)
+//.all(methodNotAllowed*) * create 405 error function & require in
 
 articlesRouter
     .route('/:article_id')
