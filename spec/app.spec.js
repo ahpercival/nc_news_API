@@ -204,7 +204,7 @@ describe('THE API ENDPOINT', () => {
 
           describe('/:article_id', () => {
 
-            describe('GET Request', () => {
+            describe.only('GET Request', () => {
 
               describe('Status 200 - OK', () => {
 
@@ -213,9 +213,8 @@ describe('THE API ENDPOINT', () => {
                     .get('/api/articles/1')
                     .expect(200)
                     .then(({ body }) => {
-                      expect(body.article).to.be.an('array');
-                      expect(body.article.length).to.eql(1);
-                      expect(body.article[0]).to.contain.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes', 'comment_count')
+                      expect(body).to.be.an('object');
+                      expect(body.article).to.contain.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes', 'comment_count')
                     });
                 });
 
@@ -389,14 +388,6 @@ describe('THE API ENDPOINT', () => {
                 });
 
                 describe('Status 404 - Not Found', () => {
-                  it('Should respond with 404 and error message if article ID does not exist', () => {
-                    return request
-                      .get('/api/articles/1000/comments')
-                      .expect(404)
-                      .then(({ body }) => {
-                        expect(body.msg).to.eql('No comments found')
-                      })
-                  })
 
                   it('Should respond with 404 and error message if passed invalid route', () => {
                     return request
@@ -443,7 +434,7 @@ describe('THE API ENDPOINT', () => {
                     return request
                       .post(`/api/articles/${articleID}/comments`)
                       .send(newComment)
-                      .expect(200)
+                      .expect(201)
                       .then(({ body }) => {
                         expect(body.newComment).to.be.an('array')
                         expect(body.newComment[0]).to.contain.keys('comment_id', 'author', 'article_id', 'votes', 'created_at', 'body')

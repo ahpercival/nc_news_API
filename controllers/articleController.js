@@ -23,8 +23,8 @@ const getAllArticles = (req, res, next) => {
 const getArticleById = (req, res, next) => {
     const { article_id } = req.params
     fetchArticleById(article_id)
-        .then(article => {
-            if (!article.length) { return next({ code: 4041 }) }
+        .then(([article]) => {
+            if (!article) { return next({ code: 4041 }) }
             res.status(200).send({ article })
         })
         .catch(next)
@@ -46,7 +46,6 @@ const getArticleCommentsById = (req, res, next) => {
     const { sort_by, order } = req.query
     fetchArticleCommentsById(article_id, sort_by, order)
         .then(comments => {
-            if (!comments.length) { return next({ code: 4042 }) }
             res.status(200).send({ comments })
         })
         .catch(next)
@@ -58,7 +57,7 @@ const postNewComment = (req, res, next) => {
     addNewComment(article_id, username, body)
         .then(newComment => {
             if (!newComment[0].body.length) { return Promise.reject({ code: 4003 }) }
-            res.status(200).send({ newComment })
+            res.status(201).send({ newComment })
         })
         .catch(next)
 }
