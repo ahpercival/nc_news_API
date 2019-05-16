@@ -10,7 +10,7 @@ const chaiSorted = require('chai-sorted')
 
 chai.use(chaiSorted)
 
-describe.only('THE API ENDPOINT', () => {
+describe('THE API ENDPOINT', () => {
   beforeEach(() => connection.seed.run());
   after(() => connection.destroy());
 
