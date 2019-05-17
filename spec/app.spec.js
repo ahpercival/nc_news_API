@@ -21,7 +21,7 @@ describe('THE API ENDPOINT', () => {
 
       describe('Status 200 - OK', () => {
 
-        it.only('/ - Should return true successfully reaching this endpoint', () => {
+        it('/ - Should return true successfully reaching this endpoint', () => {
           return request
             .get('/api')
             .expect(200)
