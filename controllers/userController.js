@@ -1,5 +1,22 @@
-const fetchUserByUsername = require('../model/userModel')
+const { fetchUserByUsername, fetchAllUsers, addNewUser } = require('../model/userModel')
 
+const getAllUsers = (req, res, next) => {
+    fetchAllUsers().then(users => {
+        res.status(200).send({ users })
+    })
+        .catch(next)
+}
+
+const postNewUser = (req, res, next) => {
+    const { username, avatar_url, name } = req.body
+    const newUser = { username, avatar_url, name }
+    addNewUser(newUser)
+        .then(([user]) => {
+            if (!user.username.length || !user.avatar_url.length || !user.name.length) { return next({ code: 4005 }) }
+            res.status(201).send({ user })
+        })
+        .catch(next)
+}
 
 const getUserByUsername = (req, res, next) => {
     const { username } = req.params
@@ -11,4 +28,4 @@ const getUserByUsername = (req, res, next) => {
         .catch(next)
 }
 
-module.exports = getUserByUsername
+module.exports = { getUserByUsername, getAllUsers, postNewUser }

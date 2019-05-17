@@ -620,7 +620,7 @@ describe('THE API ENDPOINT', () => {
                     .send(newComment)
                     .expect(400)
                     .then(({ body }) => {
-                      expect(body.msg).to.eql('Missing information - please enter valid username & comment')
+                      expect(body.msg).to.eql('Missing information - please enter valid details')
                     })
                 });
 
@@ -632,7 +632,7 @@ describe('THE API ENDPOINT', () => {
                     .send(newComment)
                     .expect(400)
                     .then(({ body }) => {
-                      expect(body.msg).to.eql('Missing information - please enter valid username & comment')
+                      expect(body.msg).to.eql('Missing information - please enter valid details')
                     })
                 });
 
@@ -865,6 +865,88 @@ describe('THE API ENDPOINT', () => {
 
       describe('/users', () => {
 
+        describe('POST Request', () => {
+
+          describe('Status 201 - Created', () => {
+
+            it('Responds with new user when passed object with username, name & avatar_url properties', () => {
+              const newUser = { username: 'ahpercival', avatar_url: 'https://dyingscene.com/wp-content/uploads/descendents_milo.gif', name: 'Adrian' }
+              return request
+                .post(`/api/users`)
+                .send(newUser)
+                .expect(201)
+                .then(({ body }) => {
+                  expect(body).to.be.an('object');
+                  expect(body.user).to.contain.keys('username', 'avatar_url', 'name')
+                });
+            });
+
+          });
+
+          describe('Status 400 - Bad Request', () => {
+
+            it('Responds with 400 and error message when not passed any properties', () => {
+              const newUser = { username: '', avatar_url: '', name: '' }
+              return request
+                .post(`/api/users`)
+                .send(newUser)
+                .expect(400)
+                .then(({ body }) => {
+                  expect(body.msg).to.eql('No user details provided');
+                });
+            });
+
+            it('Responds with 400 and error message when missing key items', () => {
+              const newUser = {}
+              return request
+                .post(`/api/users`)
+                .send(newUser)
+                .expect(400)
+                .then(({ body }) => {
+                  expect(body.msg).to.eql('Missing information - please enter valid details');
+                });
+            });
+
+          });
+
+        });
+
+        describe('GET Request', () => {
+
+          describe('Status 200 - OK', () => {
+
+            it('Should return array of users object', () => {
+              return request
+                .get('/api/users')
+                .expect(200)
+                .then(({ body }) => {
+                  expect(body.users).to.be.an('array');
+                  body.users.forEach(user => {
+                    expect(user).to.contain.keys('username', 'avatar_url', 'name')
+                  })
+                });
+            });
+          });
+
+        });
+
+        describe('UNAUTHORISED Request', () => {
+
+          describe('Status 405 - Method Not Allowed', () => {
+
+            it('Responds with 405 and error message', () => {
+              return request
+                .put('/api/users')
+                .expect(405)
+                .then(({ body }) => {
+                  expect(body.msg).to.eql('Method Not Allowed');
+                });
+            });
+
+          });
+
+        });
+
         describe('/:username', () => {
 
           describe('GET Request', () => {
@@ -898,19 +980,19 @@ describe('THE API ENDPOINT', () => {
 
           });
 
-        });
+          describe('UNAUTHORISED Request', () => {
 
-        describe('UNAUTHORISED Request', () => {
+            describe('Status 405 - Method Not Allowed', () => {
 
-          describe('Status 405 - Method Not Allowed', () => {
+              it('Responds with 405 and error message', () => {
+                return request
+                  .put('/api/users/butter_bridge')
+                  .expect(405)
+                  .then(({ body }) => {
+                    expect(body.msg).to.eql('Method Not Allowed');
+                  });
+              });
 
-            it('Responds with 405 and error message', () => {
-              return request
-                .put('/api/users/butter_bridge')
-                .expect(405)
-                .then(({ body }) => {
-                  expect(body.msg).to.eql('Method Not Allowed');
-                });
             });
 
           });
