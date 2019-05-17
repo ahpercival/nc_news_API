@@ -1,4 +1,4 @@
-const fetchTopicData = require('../model/topicModel')
+const { fetchTopicData, addNewTopic } = require('../model/topicModel')
 
 const getTopicData = (req, res, next) => {
 
@@ -9,4 +9,15 @@ const getTopicData = (req, res, next) => {
         .catch(next)
 }
 
-module.exports = getTopicData
+const postNewTopic = (req, res, next) => {
+    const { slug, description } = req.body
+    const newTopic = { slug, description }
+    addNewTopic(newTopic)
+        .then(([topic]) => {
+            if (!topic.slug.length || !topic.description.length) { return next({ code: 4005 }) }
+            res.status(201).send({ topic })
+        })
+        .catch(next)
+}
+
+module.exports = { getTopicData, postNewTopic }

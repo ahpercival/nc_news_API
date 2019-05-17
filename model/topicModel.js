@@ -6,5 +6,11 @@ const fetchTopicData = () => {
         .from('topics')
 }
 
+const addNewTopic = (newTopic) => {
+    return connection('topics')
+        .insert(newTopic)
+        .returning('*')
+}
 
-module.exports = fetchTopicData 
+
+module.exports = { fetchTopicData, addNewTopic } 

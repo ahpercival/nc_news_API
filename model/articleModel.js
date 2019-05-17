@@ -53,10 +53,24 @@ const addNewComment = (newComment) => {
         .returning('*')
 }
 
+const addNewArticle = (newArticle) => {
+    return connection('articles')
+        .insert(newArticle)
+        .returning('*')
+}
+
+const removeArticleById = (article_id) => {
+    return connection('articles')
+        .where('articles.article_id', '=', article_id)
+        .del()
+}
+
 module.exports = {
     fetchAllArticles,
     fetchArticleById,
     updateVoteByArticleID,
     fetchArticleCommentsById,
-    addNewComment
+    addNewComment,
+    addNewArticle,
+    removeArticleById
 }

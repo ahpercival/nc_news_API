@@ -3,7 +3,9 @@ const {
     fetchArticleById,
     updateVoteByArticleID,
     fetchArticleCommentsById,
-    addNewComment
+    addNewComment,
+    addNewArticle,
+    removeArticleById
 } = require('../model/articleModel')
 
 const getAllArticles = (req, res, next) => {
@@ -65,10 +67,31 @@ const postNewComment = (req, res, next) => {
         .catch(next)
 }
 
+const postNewArticle = (req, res, next) => {
+    const { author, title, body, topic } = req.body
+    const newArticle = { author, title, body, topic }
+    addNewArticle(newArticle)
+        .then(([article]) => {
+            res.status(201).send({ article })
+        })
+        .catch(next)
+}
+
+const deleteArticleById = (req, res, next) => {
+    const { article_id } = req.params
+    removeArticleById(article_id)
+        .then(() => {
+            res.status(204).send()
+        })
+        .catch(next)
+}
+
 module.exports = {
     getAllArticles,
     getArticleById,
     patchVoteByArticleId,
     getArticleCommentsById,
-    postNewComment
+    postNewComment,
+    postNewArticle,
+    deleteArticleById
 }

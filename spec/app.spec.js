@@ -87,11 +87,11 @@ describe('THE API ENDPOINT', () => {
 
         });
 
-        xdescribe('POST Request', () => {
+        describe('POST Request', () => {
 
           describe('Status 201 - Created', () => {
 
-            it('Responds with new comment when passed object with username & body properties', () => {
+            it('Responds with new topic when passed object with slug & description properties', () => {
               const newTopic = { slug: 'test topic', description: 'hello' }
 
               return request
@@ -101,6 +101,32 @@ describe('THE API ENDPOINT', () => {
                 .then(({ body }) => {
                   expect(body).to.be.an('object');
                   expect(body.topic).to.contain.keys('slug', 'description')
+                });
+            });
+
+          });
+
+          describe('Status 400 - Bad Request', () => {
+
+            it('Responds with 400 and error message when not passed any properties', () => {
+              const newTopic = { slug: '', description: '' }
+              return request
+                .post('/api/topics')
+                .send(newTopic)
+                .expect(400)
+                .then(({ body }) => {
+                  expect(body.msg).to.eql('No details provided');
+                });
+            });
+
+            it('Responds with 400 and error message when missing key items', () => {
+              const newTopic = {}
+              return request
+                .post('/api/topics')
+                .send(newTopic)
+                .expect(400)
+                .then(({ body }) => {
+                  expect(body.msg).to.eql('Missing information - please enter valid details');
                 });
             });
 
@@ -172,7 +198,7 @@ describe('THE API ENDPOINT', () => {
           });
         });
 
-        xdescribe('POST Request', () => {
+        describe('POST Request', () => {
 
           describe('Status 201 - Created', () => {
 
@@ -184,11 +210,38 @@ describe('THE API ENDPOINT', () => {
                 .expect(201)
                 .then(({ body }) => {
                   expect(body).to.be.an('object');
-                  expect(body.article).to.contain.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes', 'comment_count')
+                  expect(body.article).to.contain.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes')
                 });
             });
 
           });
+
+          describe('Status 400 - Bad Request', () => {
+
+            it('Responds with 400 and error message when not passed any properties', () => {
+              const newArticle = { author: '', title: '', body: '', topic: '' }
+              return request
+                .post('/api/articles')
+                .send(newArticle)
+                .expect(400)
+                .then(({ body }) => {
+                  expect(body.msg).to.eql('Unable to post content');
+                });
+            });
+
+            it('Responds with 400 and error message when missing key items', () => {
+              const newArticle = {}
+              return request
+                .post('/api/articles')
+                .send(newArticle)
+                .expect(400)
+                .then(({ body }) => {
+                  expect(body.msg).to.eql('Missing information - please enter valid details');
+                });
+            });
+
+          });
+
         })
 
         describe('/?', () => {
@@ -416,8 +469,8 @@ describe('THE API ENDPOINT', () => {
 
           xdescribe('DELETE Request', () => {
 
-            describe('Status 204 - No Content', () => {
-
+            xdescribe('Status 204 - No Content', () => {
+              //NEED TO ADD .onDelete(cascade) TO MIGRATION
               it('Should delete the given article by article_id & respond with status 204 and no content', () => {
                 return request
                   .delete('/api/articles/1')
@@ -608,7 +661,7 @@ describe('THE API ENDPOINT', () => {
                     .send(newComment)
                     .expect(400)
                     .then(({ body }) => {
-                      expect(body.msg).to.eql('Unable to post comment')
+                      expect(body.msg).to.eql('Unable to post content')
                     })
                 });
 
@@ -660,7 +713,7 @@ describe('THE API ENDPOINT', () => {
                     .send(newComment)
                     .expect(404)
                     .then(({ body }) => {
-                      expect(body.msg).to.eql('Unable to post comment')
+                      expect(body.msg).to.eql('Unable to post content')
                     })
                 });
 
@@ -892,7 +945,7 @@ describe('THE API ENDPOINT', () => {
                 .send(newUser)
                 .expect(400)
                 .then(({ body }) => {
-                  expect(body.msg).to.eql('No user details provided');
+                  expect(body.msg).to.eql('No details provided');
                 });
             });
 

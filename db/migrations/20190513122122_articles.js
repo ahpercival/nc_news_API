@@ -9,7 +9,7 @@ exports.up = function (knex, Promise) {
         articlesTable.foreign('topic').references('topics.slug')
         articlesTable.string('author').notNullable();
         articlesTable.foreign('author').references('users.username')
-        articlesTable.timestamp('created_at', { useTz: true })
+        articlesTable.timestamp('created_at', { useTz: true }).defaultTo(knex.fn.now())
     })
 };
 
