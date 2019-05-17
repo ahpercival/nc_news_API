@@ -87,6 +87,27 @@ describe('THE API ENDPOINT', () => {
 
         });
 
+        xdescribe('POST Request', () => {
+
+          describe('Status 201 - Created', () => {
+
+            it('Responds with new comment when passed object with username & body properties', () => {
+              const newTopic = { slug: 'test topic', description: 'hello' }
+
+              return request
+                .post('/api/topics')
+                .send(newTopic)
+                .expect(201)
+                .then(({ body }) => {
+                  expect(body).to.be.an('object');
+                  expect(body.topic).to.contain.keys('slug', 'description')
+                });
+            });
+
+          });
+
+        });
+
         describe('UNAUTHORISED Request', () => {
 
           describe('Status 405 - Method Not Allowed', () => {
@@ -139,10 +160,39 @@ describe('THE API ENDPOINT', () => {
 
             });
 
+            xit('Should limit the number of articles returned to 5 per page', () => {
+              return request
+                .get('/api/articles')
+                .expect(200)
+                .then(({ body }) => {
+                  expect(body.articles.length).to.eql(5)
+                });
+            });
+
           });
+        });
 
-          describe('/?', () => {
+        xdescribe('POST Request', () => {
 
+          describe('Status 201 - Created', () => {
+
+            it('Should post/respond with new article when passed article object', () => {
+              const newArticle = { author: 'butter_bridge', title: 'New Article', body: 'hello', topic: 'mitch' }
+              return request
+                .post('/api/articles')
+                .send(newArticle)
+                .expect(201)
+                .then(({ body }) => {
+                  expect(body).to.be.an('object');
+                  expect(body.article).to.contain.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes', 'comment_count')
+                });
+            });
+
+          });
+        })
+
+        describe('/?', () => {
+          describe('GET Request', () => {
             describe('Status 200 - OK', () => {
 
               it('Should accept sort-by query which sorts the articles when passed any valid column', () => {
@@ -236,22 +286,254 @@ describe('THE API ENDPOINT', () => {
               });
 
             });
+          })
+        });
+
+        describe('/:article_id', () => {
+
+          describe('GET Request', () => {
+
+            describe('Status 200 - OK', () => {
+
+              it('Responds with a single article object when passed a valid article ID', () => {
+                return request
+                  .get('/api/articles/1')
+                  .expect(200)
+                  .then(({ body }) => {
+                    expect(body).to.be.an('object');
+                    expect(body.article).to.contain.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes', 'comment_count')
+                  });
+              });
+
+            });
+
+            describe('Status 404 - Not Found', () => {
+
+              it('Should respond with 404 and error message if passed invalid article ID', () => {
+                return request
+                  .get('/api/articles/1000000')
+                  .expect(404)
+                  .then(({ body }) => {
+                    expect(body.msg).to.eql('No articles found')
+
+                  });
+
+              });
+
+            });
+
+            describe('Status 400 - Bad Request', () => {
+
+              it('Should respond with 400 and error message if passed invalid article ID', () => {
+                return request
+                  .get('/api/articles/a')
+                  .expect(400)
+                  .then(({ body }) => {
+                    expect(body.msg).to.eql('Invalid character entered')
+                  });
+              });
+
+            });
 
           });
 
-          describe('/:article_id', () => {
+          describe('PATCH Request', () => {
+
+            describe('Status 200 - OK', () => {
+
+              it('Should increment vote by taking vote object and responding with updated article', () => {
+                const newVote = 1
+                return request
+                  .patch('/api/articles/1')
+                  .send({ inc_votes: newVote })
+                  .expect(200)
+                  .then(({ body }) => {
+                    expect(body).to.be.an('object')
+                    expect(body).to.contain.keys('article')
+                    expect(body.article).to.contain.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes')
+                    expect(body.article.votes).to.eql(101)
+                  });
+              });
+
+              it('Should decrement vote by taking vote object and responding with updated article', () => {
+                const newVote = -1
+                return request
+                  .patch('/api/articles/1')
+                  .send({ inc_votes: newVote })
+                  .expect(200)
+                  .then(({ body }) => {
+                    expect(body).to.be.an('object')
+                    expect(body).to.contain.keys('article')
+                    expect(body.article).to.contain.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes')
+                    expect(body.article.votes).to.eql(99)
+                  });
+              });
+
+              it('Should not increment/decrement vote if object key is invalid', () => {
+                const newVote = 100
+                return request
+                  .patch('/api/articles/1')
+                  .send({ incorrect_key: newVote })
+                  .expect(200)
+                  .then(({ body }) => {
+                    expect(body).to.be.an('object')
+                    expect(body).to.contain.keys('article')
+                    expect(body.article).to.contain.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes')
+                    expect(body.article.votes).to.eql(100)
+                  });
+              });
+
+
+            });
+
+            describe('Status 400 - Bad Request', () => {
+
+              it('Should respond with 400 and error message if passed invalid article ID', () => {
+                const newVote = 1
+                return request
+                  .patch('/api/articles/10000')
+                  .send({ inc_votes: newVote })
+                  .expect(400)
+                  .then(({ body }) => {
+                    expect(body.msg).to.eql('Article does not exist')
+                  });
+              });
+
+              it('Should respond with 400 and error message if passed invalid object value', () => {
+                const newVote = 'a'
+                return request
+                  .patch('/api/articles/1')
+                  .send({ inc_votes: newVote })
+                  .expect(400)
+                  .then(({ body }) => {
+                    expect(body.msg).to.eql('Invalid character entered')
+                  });
+              });
+
+            });
+
+          });
+
+          xdescribe('DELETE Request', () => {
+
+            describe('Status 204 - No Content', () => {
+
+              it('Should delete the given article by article_id & respond with status 204 and no content', () => {
+                return request
+                  .delete('/api/articles/1')
+                  .expect(204)
+              });
+
+            });
+
+            describe('Status 400 - Bad Request', () => {
+
+              it('Should return 400 and no content if article ID is invalid', () => {
+                return request
+                  .delete('/api/articles/invalid')
+                  .expect(400)
+                  .then(({ body }) => {
+                    expect(body.msg).to.eql('Invalid character entered')
+                  });
+              });
+
+            });
+
+            describe('Status 404 - Not Found', () => {
+
+              it("Should return 404 and no content if article ID doesn't exist", () => {
+                return request
+                  .delete('/api/articles/1000')
+                  .expect(404)
+                  .then(({ body }) => {
+                    expect(body.msg).to.eql('No comments found')
+                  });
+              });
+
+            });
+
+          });
+
+          describe('UNAUTHORISED Request', () => {
+
+            describe('Status 405 - Method Not Allowed', () => {
+
+              it('Responds with 405 and error message', () => {
+                return request
+                  .put('/api/articles/1')
+                  .expect(405)
+                  .then(({ body }) => {
+                    expect(body.msg).to.eql('Method Not Allowed');
+                  });
+              });
+
+            });
+
+          });
+
+          describe('/comments', () => {
 
             describe('GET Request', () => {
 
               describe('Status 200 - OK', () => {
 
-                it('Responds with a single article object when passed a valid article ID', () => {
+                it('Responds with an array of comments for the given article_id', () => {
                   return request
-                    .get('/api/articles/1')
+                    .get('/api/articles/1/comments')
                     .expect(200)
                     .then(({ body }) => {
-                      expect(body).to.be.an('object');
-                      expect(body.article).to.contain.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes', 'comment_count')
+                      expect(body.comments).to.be.an('array');
+                      body.comments.forEach(comment => {
+                        expect(comment).to.contain.keys('comment_id', 'votes', 'created_at', 'author', 'body')
+                      })
+                    });
+                });
+
+                it('Comments should be sorted by created_at in descending order by default', () => {
+                  return request
+                    .get('/api/articles/1/comments')
+                    .expect(200)
+                    .then(({ body }) => {
+                      expect(body.comments).to.be.descendingBy('created_at')
+                    });
+                });
+
+                it('Should sort articles by any valid column passed in query', () => {
+                  return request
+                    .get('/api/articles/1/comments?sort_by=author')
+                    .expect(200)
+                    .then(({ body }) => {
+                      expect(body.comments).to.be.descendingBy('author')
+                    });
+                });
+
+                it('Should order articles in ascending order when specified in query', () => {
+                  return request
+                    .get('/api/articles/1/comments?order=asc')
+                    .expect(200)
+                    .then(({ body }) => {
+                      expect(body.comments).to.be.ascendingBy('created_at')
+                    });
+                });
+
+                it('Should return article comments sorted by default when passed query with invalid query key', () => {
+                  return request
+                    .get('/api/articles/1/comments?invalid_query=author')
+                    .expect(200)
+                    .then(({ body }) => {
+                      expect(body.comments).to.be.an('array');
+                      body.comments.forEach(comment => {
+                        expect(comment).to.contain.keys('comment_id', 'votes', 'created_at', 'author', 'body')
+                      })
+                    });
+                });
+
+                xit('Should limit the number of comments returned to 5 per page', () => {
+                  return request
+                    .get('/api/articles/1/comments')
+                    .expect(200)
+                    .then(({ body }) => {
+                      expect(body.comments.length).to.eql(5)
                     });
                 });
 
@@ -259,15 +541,13 @@ describe('THE API ENDPOINT', () => {
 
               describe('Status 404 - Not Found', () => {
 
-                it('Should respond with 404 and error message if passed invalid article ID', () => {
+                it('Should respond with 404 and error message if passed invalid route', () => {
                   return request
-                    .get('/api/articles/1000000')
+                    .get('/api/articles/1/comment')
                     .expect(404)
                     .then(({ body }) => {
-                      expect(body.msg).to.eql('No articles found')
-
-                    });
-
+                      expect(body.msg).to.eql('Route Not Found')
+                    })
                 });
 
               });
@@ -276,10 +556,19 @@ describe('THE API ENDPOINT', () => {
 
                 it('Should respond with 400 and error message if passed invalid article ID', () => {
                   return request
-                    .get('/api/articles/a')
+                    .get('/api/articles/invalid_id/comments')
                     .expect(400)
                     .then(({ body }) => {
                       expect(body.msg).to.eql('Invalid character entered')
+                    })
+                });
+
+                it('Should respond with 400 and error message when passed invalid column', () => {
+                  return request
+                    .get('/api/articles/1/comments?sort_by=invalid_column')
+                    .expect(400)
+                    .then(({ body }) => {
+                      expect(body.msg).to.eql('Unable to sort - Invalid column')
                     });
                 });
 
@@ -287,77 +576,92 @@ describe('THE API ENDPOINT', () => {
 
             });
 
-            describe('PATCH Request', () => {
+            describe('POST Request', () => {
 
-              describe('Status 200 - OK', () => {
+              describe('Status 201 - Created', () => {
 
-                it('Should increment vote by taking vote object and responding with updated article', () => {
-                  const newVote = 1
+                it('Responds with new comment when passed object with username & body properties', () => {
+                  const newComment = { username: 'butter_bridge', body: 'hello' }
+                  const articleID = 1
                   return request
-                    .patch('/api/articles/1')
-                    .send({ inc_votes: newVote })
-                    .expect(200)
+                    .post(`/api/articles/${articleID}/comments`)
+                    .send(newComment)
+                    .expect(201)
                     .then(({ body }) => {
                       expect(body).to.be.an('object')
-                      expect(body).to.contain.keys('article')
-                      expect(body.article).to.contain.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes')
-                      expect(body.article.votes).to.eql(101)
-                    });
+                      expect(body.comment).to.contain.keys('comment_id', 'author', 'article_id', 'votes', 'created_at', 'body')
+                      expect(body.comment.author).to.eql('butter_bridge')
+                      expect(body.comment.body).to.eql('hello')
+                      expect(body.comment.article_id).to.eql(articleID)
+                    })
                 });
-
-                it('Should decrement vote by taking vote object and responding with updated article', () => {
-                  const newVote = -1
-                  return request
-                    .patch('/api/articles/1')
-                    .send({ inc_votes: newVote })
-                    .expect(200)
-                    .then(({ body }) => {
-                      expect(body).to.be.an('object')
-                      expect(body).to.contain.keys('article')
-                      expect(body.article).to.contain.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes')
-                      expect(body.article.votes).to.eql(99)
-                    });
-                });
-
-                it('Should not increment/decrement vote if object key is invalid', () => {
-                  const newVote = 100
-                  return request
-                    .patch('/api/articles/1')
-                    .send({ incorrect_key: newVote })
-                    .expect(200)
-                    .then(({ body }) => {
-                      expect(body).to.be.an('object')
-                      expect(body).to.contain.keys('article')
-                      expect(body.article).to.contain.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes')
-                      expect(body.article.votes).to.eql(100)
-                    });
-                });
-
 
               });
 
               describe('Status 400 - Bad Request', () => {
 
-                it('Should respond with 400 and error message if passed invalid article ID', () => {
-                  const newVote = 1
+                it('Should respond with 400 and error message if user does not exist in user table', () => {
+                  const newComment = { username: 'Adrian', body: 'hello' }
+                  const articleID = 1
                   return request
-                    .patch('/api/articles/10000')
-                    .send({ inc_votes: newVote })
+                    .post(`/api/articles/${articleID}/comments`)
+                    .send(newComment)
                     .expect(400)
                     .then(({ body }) => {
-                      expect(body.msg).to.eql('Article does not exist')
-                    });
+                      expect(body.msg).to.eql('Unable to post comment')
+                    })
                 });
 
-                it('Should respond with 400 and error message if passed invalid object value', () => {
-                  const newVote = 'a'
+                it("Should respond with 400 and error message if comment does not have username", () => {
+                  const newComment = { username: 'butter_bridge' }
+                  const articleID = 1
                   return request
-                    .patch('/api/articles/1')
-                    .send({ inc_votes: newVote })
+                    .post(`/api/articles/${articleID}/comments`)
+                    .send(newComment)
                     .expect(400)
                     .then(({ body }) => {
-                      expect(body.msg).to.eql('Invalid character entered')
-                    });
+                      expect(body.msg).to.eql('Missing information - please enter valid username & comment')
+                    })
+                });
+
+                it("Should respond with 400 and error message if comment does not have body", () => {
+                  const newComment = { body: 'hello' }
+                  const articleID = 1
+                  return request
+                    .post(`/api/articles/${articleID}/comments`)
+                    .send(newComment)
+                    .expect(400)
+                    .then(({ body }) => {
+                      expect(body.msg).to.eql('Missing information - please enter valid username & comment')
+                    })
+                });
+
+                it("Should respond with 400 and error message if body is empty", () => {
+                  const newComment = { username: 'butter_bridge', body: '' }
+                  const articleID = 1
+                  return request
+                    .post(`/api/articles/${articleID}/comments`)
+                    .send(newComment)
+                    .expect(400)
+                    .then(({ body }) => {
+                      expect(body.msg).to.eql('Please include comment')
+                    })
+                });
+
+              });
+
+              describe('Status 404 - Not Found', () => {
+
+                it("Should respond with 404 and error message if article doesn't exist", () => {
+                  const newComment = { username: 'butter_bridge', body: 'hello' }
+                  const articleID = 10000
+                  return request
+                    .post(`/api/articles/${articleID}/comments`)
+                    .send(newComment)
+                    .expect(404)
+                    .then(({ body }) => {
+                      expect(body.msg).to.eql('Unable to post comment')
+                    })
                 });
 
               });
@@ -370,7 +674,7 @@ describe('THE API ENDPOINT', () => {
 
                 it('Responds with 405 and error message', () => {
                   return request
-                    .put('/api/articles/1')
+                    .put('/api/articles/1/comments')
                     .expect(405)
                     .then(({ body }) => {
                       expect(body.msg).to.eql('Method Not Allowed');
@@ -381,218 +685,12 @@ describe('THE API ENDPOINT', () => {
 
             });
 
-            describe('/comments', () => {
-
-              describe('GET Request', () => {
-
-                describe('Status 200 - OK', () => {
-
-                  it('Responds with an array of comments for the given article_id', () => {
-                    return request
-                      .get('/api/articles/1/comments')
-                      .expect(200)
-                      .then(({ body }) => {
-                        expect(body.comments).to.be.an('array');
-                        body.comments.forEach(comment => {
-                          expect(comment).to.contain.keys('comment_id', 'votes', 'created_at', 'author', 'body')
-                        })
-                      });
-                  });
-
-                  it('Comments should be sorted by created_at in descending order by default', () => {
-                    return request
-                      .get('/api/articles/1/comments')
-                      .expect(200)
-                      .then(({ body }) => {
-                        expect(body.comments).to.be.descendingBy('created_at')
-                      });
-                  });
-
-                  it('Should sort articles by any valid column passed in query', () => {
-                    return request
-                      .get('/api/articles/1/comments?sort_by=author')
-                      .expect(200)
-                      .then(({ body }) => {
-                        expect(body.comments).to.be.descendingBy('author')
-                      });
-                  });
-
-                  it('Should order articles in ascending order when specified in query', () => {
-                    return request
-                      .get('/api/articles/1/comments?order=asc')
-                      .expect(200)
-                      .then(({ body }) => {
-                        expect(body.comments).to.be.ascendingBy('created_at')
-                      });
-                  });
-
-                  it('Should return article comments sorted by default when passed query with invalid query key', () => {
-                    return request
-                      .get('/api/articles/1/comments?invalid_query=author')
-                      .expect(200)
-                      .then(({ body }) => {
-                        expect(body.comments).to.be.an('array');
-                        body.comments.forEach(comment => {
-                          expect(comment).to.contain.keys('comment_id', 'votes', 'created_at', 'author', 'body')
-                        })
-                      });
-                  });
-
-
-                });
-
-                describe('Status 404 - Not Found', () => {
-
-                  it('Should respond with 404 and error message if passed invalid route', () => {
-                    return request
-                      .get('/api/articles/1/comment')
-                      .expect(404)
-                      .then(({ body }) => {
-                        expect(body.msg).to.eql('Route Not Found')
-                      })
-                  });
-
-                });
-
-                describe('Status 400 - Bad Request', () => {
-
-                  it('Should respond with 400 and error message if passed invalid article ID', () => {
-                    return request
-                      .get('/api/articles/invalid_id/comments')
-                      .expect(400)
-                      .then(({ body }) => {
-                        expect(body.msg).to.eql('Invalid character entered')
-                      })
-                  });
-
-                  it('Should respond with 400 and error message when passed invalid column', () => {
-                    return request
-                      .get('/api/articles/1/comments?sort_by=invalid_column')
-                      .expect(400)
-                      .then(({ body }) => {
-                        expect(body.msg).to.eql('Unable to sort - Invalid column')
-                      });
-                  });
-
-                });
-
-              });
-
-              describe('POST Request', () => {
-
-                describe('Status 201 - Created', () => {
-
-                  it('Responds with new comment when passed object with username & body properties', () => {
-                    const newComment = { username: 'butter_bridge', body: 'hello' }
-                    const articleID = 1
-                    return request
-                      .post(`/api/articles/${articleID}/comments`)
-                      .send(newComment)
-                      .expect(201)
-                      .then(({ body }) => {
-                        expect(body).to.be.an('object')
-                        expect(body.comment).to.contain.keys('comment_id', 'author', 'article_id', 'votes', 'created_at', 'body')
-                        expect(body.comment.author).to.eql('butter_bridge')
-                        expect(body.comment.body).to.eql('hello')
-                        expect(body.comment.article_id).to.eql(articleID)
-                      })
-                  });
-
-                });
-
-                describe('Status 400 - Bad Request', () => {
-
-                  it('Should respond with 400 and error message if user does not exist in user table', () => {
-                    const newComment = { username: 'Adrian', body: 'hello' }
-                    const articleID = 1
-                    return request
-                      .post(`/api/articles/${articleID}/comments`)
-                      .send(newComment)
-                      .expect(400)
-                      .then(({ body }) => {
-                        expect(body.msg).to.eql('Unable to post comment')
-                      })
-                  });
-
-                  it("Should respond with 400 and error message if comment does not have username", () => {
-                    const newComment = { username: 'butter_bridge' }
-                    const articleID = 1
-                    return request
-                      .post(`/api/articles/${articleID}/comments`)
-                      .send(newComment)
-                      .expect(400)
-                      .then(({ body }) => {
-                        expect(body.msg).to.eql('Missing information - please enter valid username & comment')
-                      })
-                  });
-
-                  it("Should respond with 400 and error message if comment does not have body", () => {
-                    const newComment = { body: 'hello' }
-                    const articleID = 1
-                    return request
-                      .post(`/api/articles/${articleID}/comments`)
-                      .send(newComment)
-                      .expect(400)
-                      .then(({ body }) => {
-                        expect(body.msg).to.eql('Missing information - please enter valid username & comment')
-                      })
-                  });
-
-                  it("Should respond with 400 and error message if body is empty", () => {
-                    const newComment = { username: 'butter_bridge', body: '' }
-                    const articleID = 1
-                    return request
-                      .post(`/api/articles/${articleID}/comments`)
-                      .send(newComment)
-                      .expect(400)
-                      .then(({ body }) => {
-                        expect(body.msg).to.eql('Please include comment')
-                      })
-                  });
-
-                });
-
-                describe('Status 404 - Not Found', () => {
-
-                  it("Should respond with 404 and error message if article doesn't exist", () => {
-                    const newComment = { username: 'butter_bridge', body: 'hello' }
-                    const articleID = 10000
-                    return request
-                      .post(`/api/articles/${articleID}/comments`)
-                      .send(newComment)
-                      .expect(404)
-                      .then(({ body }) => {
-                        expect(body.msg).to.eql('Unable to post comment')
-                      })
-                  });
-
-                });
-
-              });
-
-              describe('UNAUTHORISED Request', () => {
-
-                describe('Status 405 - Method Not Allowed', () => {
-
-                  it('Responds with 405 and error message', () => {
-                    return request
-                      .put('/api/articles/1/comments')
-                      .expect(405)
-                      .then(({ body }) => {
-                        expect(body.msg).to.eql('Method Not Allowed');
-                      });
-                  });
-
-                });
-
-              });
-
-            });
-
           });
 
-
         });
+
+
+
 
         describe('UNAUTHORISED Request', () => {
 
@@ -827,5 +925,3 @@ describe('THE API ENDPOINT', () => {
 
 
 });
-
-
