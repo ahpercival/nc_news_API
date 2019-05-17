@@ -1,0 +1,29 @@
+{
+    "endpoints": {
+        "topics": {
+            "GET Request": "/api/topics"
+        },
+        "articles": {
+            "GET Request": "/api/articles",
+            "/:article_id": {
+                "GET Request": "/api/articles/:article_id",
+                "PATCH Request": "/api/articles/:article_id",
+                "/comments": {
+                    "GET Request": "/api/articles/:article_id/comments",
+                    "POST Request": "/api/articles/:article_id/comments"
+                }
+            }
+        },
+        "comments": {
+            ":comment_id": {
+                "PATCH Request": "/api/comments/:comment_id",
+                "DELETE Request": "/api/comments/:comment_id"
+            }
+        },
+        "users": {
+            ":username": {
+                "GET Request": "/api/users/:username"
+            }
+        }
+    }
+}

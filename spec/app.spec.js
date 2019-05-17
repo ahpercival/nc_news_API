@@ -7,6 +7,7 @@ const app = require('../app');
 const request = supertest(app)
 const connection = require('../db/connection');
 const chaiSorted = require('chai-sorted')
+const endpoints = require('../endpoints.json')
 
 chai.use(chaiSorted)
 
@@ -20,12 +21,12 @@ describe('THE API ENDPOINT', () => {
 
       describe('Status 200 - OK', () => {
 
-        it('/ - Should return true successfully reaching this endpoint', () => {
+        it.only('/ - Should return true successfully reaching this endpoint', () => {
           return request
             .get('/api')
             .expect(200)
             .then(({ body }) => {
-              expect(body.ok).to.equal(true);
+              expect(body).to.eql(endpoints);
             });
         });
 
