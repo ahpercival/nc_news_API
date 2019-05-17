@@ -23,6 +23,7 @@ const fetchArticleById = (article_id) => {
         .leftJoin('comments', 'articles.article_id', '=', 'comments.article_id')
         .groupBy('articles.article_id')
         .where('articles.article_id', '=', article_id)
+        .then(([article]) => { return article })
 
 }
 
@@ -31,6 +32,10 @@ const updateVoteByArticleID = (article_id, inc_votes = 0) => {
         .where('articles.article_id', '=', article_id)
         .increment('votes', inc_votes)
         .returning('*')
+        .then(([value]) => {
+            const article = { article: value }
+            return article
+        })
 
 }
 

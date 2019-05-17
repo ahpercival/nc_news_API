@@ -5,6 +5,10 @@ const updateVoteByCommentId = (comment_id, inc_votes = 0) => {
         .where('comments.comment_id', '=', comment_id)
         .increment('votes', inc_votes)
         .returning('*')
+        .then(([value]) => {
+            const comment = { comment: value }
+            return comment
+        })
 }
 
 const removeCommentById = (comment_id) => {

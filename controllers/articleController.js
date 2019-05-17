@@ -23,7 +23,7 @@ const getAllArticles = (req, res, next) => {
 const getArticleById = (req, res, next) => {
     const { article_id } = req.params
     fetchArticleById(article_id)
-        .then(([article]) => {
+        .then(article => {
             if (!article) { return next({ code: 4041 }) }
             res.status(200).send({ article })
         })
@@ -34,10 +34,8 @@ const patchVoteByArticleId = (req, res, next) => {
     const { article_id } = req.params
     const { inc_votes } = req.body
     updateVoteByArticleID(article_id, inc_votes)
-        .then(([updatedArticle]) => {
-            const article = {}
-            article.article = updatedArticle
-            if (!updatedArticle) { return next({ code: 4002 }) }
+        .then((article) => {
+            if (!article.article) { return next({ code: 4002 }) }
             res.status(200).send(article)
         })
         .catch(next)
