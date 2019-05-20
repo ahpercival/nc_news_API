@@ -1,51 +1,66 @@
-# nc_news2
+# nc_news_API
 
-## Available Scripts
+This repo is the backend API for a news app, that allows users to search, read and post articles, as well as leave votes and comments.
 
-Create development and test databases locally:
+This backend has been built with Express, Knex and a PostgreSQL database. It is hosted on Heroko
+
+## Installation
 
 ```bash
-npm run setup-dbs
+$ npm install knex, pg, express
 ```
 
-Create a new migration file:
+Create a file in the root called knexfile.js and paste in the following code:
 
-```bash
-npm run migrate-make <filename>
+```js
+const { DB_URL } = process.env;
+
+const ENV = process.env.NODE_ENV || 'development';
+
+const baseConfig = {
+  client: 'pg',
+  migrations: {
+    directory: './db/migrations',
+  },
+  seeds: {
+    directory: './db/seeds',
+  },
+};
+
+const customConfigs = {
+  development: {
+    connection: {
+      database: 'nc_news',
+      //username: '',
+      //password: '',
+    },
+  },
+  test: {
+    connection: {
+      database: 'nc_news_test',
+      //username: '',
+      //password: '',
+    },
+  },
+  production: {
+    connection: `${DB_URL}?ssl=true`,
+  },
+};
+
+module.exports = { ...baseConfig, ...customConfigs[ENV] };
+
 ```
 
-Run all migrations:
+If you are using Linux you will need to un-comment and fill in your username and password in customConfigs.
 
+Testing
 ```bash
-npm run migrate-latest
+$ npm install mocha, chai, supertest -D
+$ npm t
 ```
 
-Rollback all migrations:
-
+Usage
 ```bash
-npm run migrate-rollback
-```
-
-Run tests:
-
-```bash
-npm test
-```
-
-Rollback, migrate -> latest, then start inserting data into the database:
-
-```bash
-npm run seed
-```
-
-Run the server with `nodemon`, for hot reload:
-
-```bash
-npm run dev
-```
-
-Run the server with `node`:
-
-```bash
-npm start
+$ npm run setup-dbs
+$ npm run seed
 ```
