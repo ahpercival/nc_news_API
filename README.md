@@ -1,8 +1,8 @@
 # nc_news_API
 
-This repo is the backend API for a news app, that allows users to search, read and post articles, as well as leave votes and comments.
+This repo is the backend API for a news app, that allows users to search, read, post and delete articles, as well as add/remove votes and comments.
 
-This backend has been built with Express, Knex and a PostgreSQL database. It is hosted on Heroko
+This backend has been built with Express, Knex and a PostgreSQL database. It is hosted on Heroko at this link: https://ahp-nc-news.herokuapp.com/api
 
 ## Installation
 
