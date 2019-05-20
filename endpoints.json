@@ -1,18 +1,21 @@
 {
     "endpoints": {
         "topics": {
-            "GET Request": "/api/topics"
+            "GET Request": "/api/topics",
+            "POST Request": "/api/topics"
         },
         "articles": {
             "GET Request": "/api/articles",
             "/:article_id": {
                 "GET Request": "/api/articles/:article_id",
                 "PATCH Request": "/api/articles/:article_id",
+                "DELETE Request": "/api/articles/:article_id",
                 "/comments": {
                     "GET Request": "/api/articles/:article_id/comments",
                     "POST Request": "/api/articles/:article_id/comments"
                 }
-            }
+            },
+            "POST Request": "/api/articles"
         },
         "comments": {
             ":comment_id": {
@@ -21,6 +24,8 @@
             }
         },
         "users": {
+            "POST Request": "/api/users",
+            "GET Request": "/api/users",
             ":username": {
                 "GET Request": "/api/users/:username"
             }
