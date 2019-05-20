@@ -10,11 +10,11 @@ const {
 
 const getAllArticles = (req, res, next) => {
     const orderBy = ['desc', 'asc']
-    const { sort_by, order, author, topic } = req.query
+    const { sort_by, order, author, topic, limit, p } = req.query
 
     if (order && !orderBy.includes(order)) { return next({ code: 4001 }) }
 
-    fetchAllArticles(sort_by, order, author, topic)
+    fetchAllArticles(sort_by, order, author, topic, limit, p)
         .then(articles => {
             if (!articles.length) { return next({ code: 4041 }) }
             res.status(200).send({ articles })
@@ -45,8 +45,8 @@ const patchVoteByArticleId = (req, res, next) => {
 
 const getArticleCommentsById = (req, res, next) => {
     const { article_id } = req.params
-    const { sort_by, order } = req.query
-    fetchArticleCommentsById(article_id, sort_by, order)
+    const { sort_by, order, limit, p } = req.query
+    fetchArticleCommentsById(article_id, sort_by, order, limit, p)
         .then(comments => {
             res.status(200).send({ comments })
         })
@@ -80,7 +80,8 @@ const postNewArticle = (req, res, next) => {
 const deleteArticleById = (req, res, next) => {
     const { article_id } = req.params
     removeArticleById(article_id)
-        .then(() => {
+        .then((result) => {
+            if (!result) { return next({ code: 4041 }) }
             res.status(204).send()
         })
         .catch(next)

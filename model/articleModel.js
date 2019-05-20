@@ -1,6 +1,6 @@
 const connection = require('../db/connection')
 
-const fetchAllArticles = (sort_by, order, author, topic) => {
+const fetchAllArticles = (sort_by, order, author, topic, limit = 10, p = 1) => {
     return connection
         .select('articles.author', 'title', 'articles.article_id', 'topic', 'articles.created_at', 'articles.votes')
         .from('articles')
@@ -12,6 +12,7 @@ const fetchAllArticles = (sort_by, order, author, topic) => {
             if (author) { query.where('articles.author', author) }
             if (topic) { query.where('articles.topic', topic) }
         })
+        .limit(limit).offset((p - 1) * limit)
 }
 
 const fetchArticleById = (article_id) => {
@@ -39,12 +40,13 @@ const updateVoteByArticleID = (article_id, inc_votes = 0) => {
 
 }
 
-const fetchArticleCommentsById = (article_id, sort_by, order) => {
+const fetchArticleCommentsById = (article_id, sort_by, order, limit = 10, p = 1) => {
     return connection
         .select('comments.comment_id', 'comments.votes', 'comments.created_at', 'comments.author', 'comments.body')
         .from('comments')
         .where('comments.article_id', '=', article_id)
         .orderBy(sort_by || 'comments.created_at', order || 'desc')
+        .limit(limit).offset((p - 1) * limit)
 }
 
 const addNewComment = (newComment) => {

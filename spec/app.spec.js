@@ -11,7 +11,7 @@ const endpoints = require('../endpoints.json')
 
 chai.use(chaiSorted)
 
-describe('THE API ENDPOINT', () => {
+describe.only('THE API ENDPOINT', () => {
   beforeEach(() => connection.seed.run());
   after(() => connection.destroy());
 
@@ -186,13 +186,41 @@ describe('THE API ENDPOINT', () => {
 
             });
 
-            xit('Should limit the number of articles returned to 5 per page', () => {
-              return request
-                .get('/api/articles')
-                .expect(200)
-                .then(({ body }) => {
-                  expect(body.articles.length).to.eql(5)
-                });
+            describe('PAGINATION', () => {
+
+              it('Page 1 should return 10 articles by default', () => {
+                return request
+                  .get('/api/articles')
+                  .expect(200)
+                  .then(({ body }) => {
+                    expect(body.articles.length).to.eql(10)
+                  });
+              });
+
+              it('Page 1 should return number of articles specified in query', () => {
+                return request
+                  .get('/api/articles?limit=3')
+                  .expect(200)
+                  .then(({ body }) => {
+                    expect(body.articles.length).to.eql(3)
+                    expect(body.articles[0].title).to.eql('Living in the shadow of a great man')
+                    expect(body.articles[1].title).to.eql('Sony Vaio; or, The Laptop')
+                    expect(body.articles[2].title).to.eql('Eight pug gifs that remind me of mitch')
+                  });
+              });
+
+              it('Page 2 should return the next set of articles based on the limit/offset', () => {
+                return request
+                  .get('/api/articles?limit=3&p=2')
+                  .expect(200)
+                  .then(({ body }) => {
+                    expect(body.articles.length).to.eql(3)
+                    expect(body.articles[0].title).to.eql('Student SUES Mitch!')
+                    expect(body.articles[1].title).to.eql('UNCOVERED: catspiracy to bring down democracy')
+                    expect(body.articles[2].title).to.eql('A')
+                  });
+              });
+
             });
 
           });
@@ -243,6 +271,23 @@ describe('THE API ENDPOINT', () => {
           });
 
         })
+
+        describe('UNAUTHORISED Request', () => {
+
+          describe('Status 405 - Method Not Allowed', () => {
+
+            it('Responds with 405 and error message', () => {
+              return request
+                .put('/api/articles/')
+                .expect(405)
+                .then(({ body }) => {
+                  expect(body.msg).to.eql('Method Not Allowed');
+                });
+            });
+
+          });
+
+        });
 
         describe('/?', () => {
           describe('GET Request', () => {
@@ -340,6 +385,24 @@ describe('THE API ENDPOINT', () => {
 
             });
           })
+
+          describe('UNAUTHORISED Request', () => {
+
+            describe('Status 405 - Method Not Allowed', () => {
+
+              it('Responds with 405 and error message', () => {
+                return request
+                  .put('/api/articles/?topic=a')
+                  .expect(405)
+                  .then(({ body }) => {
+                    expect(body.msg).to.eql('Method Not Allowed');
+                  });
+              });
+
+            });
+
+          });
+
         });
 
         describe('/:article_id', () => {
@@ -467,10 +530,9 @@ describe('THE API ENDPOINT', () => {
 
           });
 
-          xdescribe('DELETE Request', () => {
+          describe('DELETE Request', () => {
 
-            xdescribe('Status 204 - No Content', () => {
-              //NEED TO ADD .onDelete(cascade) TO MIGRATION
+            describe('Status 204 - No Content', () => {
               it('Should delete the given article by article_id & respond with status 204 and no content', () => {
                 return request
                   .delete('/api/articles/1')
@@ -499,7 +561,7 @@ describe('THE API ENDPOINT', () => {
                   .delete('/api/articles/1000')
                   .expect(404)
                   .then(({ body }) => {
-                    expect(body.msg).to.eql('No comments found')
+                    expect(body.msg).to.eql('No articles found')
                   });
               });
 
@@ -581,13 +643,41 @@ describe('THE API ENDPOINT', () => {
                     });
                 });
 
-                xit('Should limit the number of comments returned to 5 per page', () => {
-                  return request
-                    .get('/api/articles/1/comments')
-                    .expect(200)
-                    .then(({ body }) => {
-                      expect(body.comments.length).to.eql(5)
-                    });
+                describe('PAGINATION', () => {
+
+                  it('Page 1 should return 10 articles by default', () => {
+                    return request
+                      .get('/api/articles/1/comments')
+                      .expect(200)
+                      .then(({ body }) => {
+                        expect(body.comments.length).to.eql(10)
+                      });
+                  });
+
+                  it('Page 1 should return number of articles specified in query', () => {
+                    return request
+                      .get('/api/articles/1/comments?limit=3')
+                      .expect(200)
+                      .then(({ body }) => {
+                        expect(body.comments.length).to.eql(3)
+                        expect(body.comments[0].comment_id).to.eql(2)
+                        expect(body.comments[1].comment_id).to.eql(3)
+                        expect(body.comments[2].comment_id).to.eql(4)
+                      });
+                  });
+
+                  it('Page 2 should return the next set of articles based on the limit/offset', () => {
+                    return request
+                      .get('/api/articles/1/comments?limit=3&p=2')
+                      .expect(200)
+                      .then(({ body }) => {
+                        expect(body.comments.length).to.eql(3)
+                        expect(body.comments[0].comment_id).to.eql(5)
+                        expect(body.comments[1].comment_id).to.eql(6)
+                        expect(body.comments[2].comment_id).to.eql(7)
+                      });
+                  });
+
                 });
 
               });
@@ -742,9 +832,6 @@ describe('THE API ENDPOINT', () => {
 
         });
 
-
-
-
         describe('UNAUTHORISED Request', () => {
 
           describe('Status 405 - Method Not Allowed', () => {
@@ -770,6 +857,23 @@ describe('THE API ENDPOINT', () => {
     describe('THE COMMENTS ENDPOINT', () => {
 
       describe('/comments', () => {
+
+        describe('UNAUTHORISED Request', () => {
+
+          describe('Status 405 - Method Not Allowed', () => {
+
+            it('Responds with 405 and error message', () => {
+              return request
+                .put('/api/comments/')
+                .expect(405)
+                .then(({ body }) => {
+                  expect(body.msg).to.eql('Method Not Allowed');
+                });
+            });
+
+          });
+
+        });
 
         describe('/:comment_id', () => {
 
@@ -890,19 +994,19 @@ describe('THE API ENDPOINT', () => {
 
           });
 
-        });
+          describe('UNAUTHORISED Request', () => {
 
-        describe('UNAUTHORISED Request', () => {
+            describe('Status 405 - Method Not Allowed', () => {
 
-          describe('Status 405 - Method Not Allowed', () => {
+              it('Responds with 405 and error message', () => {
+                return request
+                  .put('/api/comments/1')
+                  .expect(405)
+                  .then(({ body }) => {
+                    expect(body.msg).to.eql('Method Not Allowed');
+                  });
+              });
 
-            it('Responds with 405 and error message', () => {
-              return request
-                .put('/api/comments/1')
-                .expect(405)
-                .then(({ body }) => {
-                  expect(body.msg).to.eql('Method Not Allowed');
-                });
             });
 
           });
