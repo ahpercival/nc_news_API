@@ -1,6 +1,9 @@
 const express = require('express');
 const apiRouter = require('./routes/api');
 const { routeNotFound, handlePsqlErrors, handle400Errors, handle404Errors, handle500 } = require('./errors');
+const cors = require('cors')
+
+app.use(cors())
 
 const app = express();
 
