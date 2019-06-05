@@ -67,6 +67,13 @@ const removeArticleById = (article_id) => {
         .del()
 }
 
+const countTotalArticles = () => {
+    return connection
+        .from('articles')
+        .count({ total_count: 'articles.article_id' })
+        .then(([total_count]) => { return total_count.total_count })
+}
+
 module.exports = {
     fetchAllArticles,
     fetchArticleById,
@@ -74,5 +81,6 @@ module.exports = {
     fetchArticleCommentsById,
     addNewComment,
     addNewArticle,
-    removeArticleById
+    removeArticleById,
+    countTotalArticles
 }

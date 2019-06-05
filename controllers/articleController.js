@@ -5,7 +5,8 @@ const {
     fetchArticleCommentsById,
     addNewComment,
     addNewArticle,
-    removeArticleById
+    removeArticleById,
+    countTotalArticles
 } = require('../model/articleModel')
 
 const getAllArticles = (req, res, next) => {
@@ -13,11 +14,10 @@ const getAllArticles = (req, res, next) => {
     const { sort_by, order, author, topic, limit, p } = req.query
 
     if (order && !orderBy.includes(order)) { return next({ code: 4001 }) }
-
-    fetchAllArticles(sort_by, order, author, topic, limit, p)
-        .then(articles => {
+    Promise.all([countTotalArticles(), fetchAllArticles(sort_by, order, author, topic, limit, p)])
+        .then(([total_count, articles]) => {
             if (!articles.length) { return next({ code: 4041 }) }
-            res.status(200).send({ articles })
+            res.status(200).send({ total_count, articles })
         })
         .catch(next)
 }

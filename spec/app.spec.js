@@ -164,7 +164,7 @@ describe('THE API ENDPOINT', () => {
 
           describe('Status 200 - OK', () => {
 
-            it('Responds with an array of article objects', () => {
+            it.only('Responds with an array of article objects', () => {
               return request
                 .get('/api/articles')
                 .expect(200)
@@ -173,6 +173,7 @@ describe('THE API ENDPOINT', () => {
                   body.articles.forEach(article => {
                     expect(article).to.contain.keys('author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'comment_count')
                   })
+                  expect(body.total_count).to.be.a('string')
                 });
             });
 
