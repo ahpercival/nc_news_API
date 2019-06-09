@@ -14,7 +14,7 @@ const getAllArticles = (req, res, next) => {
     const { sort_by, order, author, topic, limit, p } = req.query
 
     if (order && !orderBy.includes(order)) { return next({ code: 4001 }) }
-    Promise.all([countTotalArticles(), fetchAllArticles(sort_by, order, author, topic, limit, p)])
+    Promise.all([countTotalArticles(author, topic), fetchAllArticles(sort_by, order, author, topic, limit, p)])
         .then(([total_count, articles]) => {
             if (!articles.length) { return next({ code: 4041 }) }
             res.status(200).send({ total_count, articles })

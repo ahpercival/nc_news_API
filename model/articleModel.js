@@ -67,11 +67,17 @@ const removeArticleById = (article_id) => {
         .del()
 }
 
-const countTotalArticles = () => {
+const countTotalArticles = (author, topic) => {
     return connection
         .from('articles')
+        .modify(query => {
+            if (author) { query.where('articles.author', author) }
+            if (topic) { query.where('articles.topic', topic) }
+        })
         .count({ total_count: 'articles.article_id' })
-        .then(([total_count]) => { return total_count.total_count })
+        .then(([total_count]) => {
+            return total_count.total_count
+        })
 }
 
 module.exports = {

@@ -164,7 +164,7 @@ describe('THE API ENDPOINT', () => {
 
           describe('Status 200 - OK', () => {
 
-            it.only('Responds with an array of article objects', () => {
+            it('Responds with an array of article objects', () => {
               return request
                 .get('/api/articles')
                 .expect(200)
@@ -174,6 +174,7 @@ describe('THE API ENDPOINT', () => {
                     expect(article).to.contain.keys('author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'comment_count')
                   })
                   expect(body.total_count).to.be.a('string')
+                  expect(body.total_count).to.eql('12')
                 });
             });
 
@@ -301,7 +302,6 @@ describe('THE API ENDPOINT', () => {
                   .then(({ body }) => {
                     expect(body.articles).to.be.descendingBy('author')
                   });
-
               });
 
               it('Should accept asc order query which returns articles in ascending order', () => {
@@ -322,6 +322,8 @@ describe('THE API ENDPOINT', () => {
                     body.articles.forEach(article =>
                       expect(article.author).to.eql('butter_bridge')
                     )
+                    expect(body.total_count).to.be.a('string')
+                    expect(body.total_count).to.eql('3')
                   });
 
               });
@@ -334,6 +336,8 @@ describe('THE API ENDPOINT', () => {
                     body.articles.forEach(article =>
                       expect(article.topic).to.eql('mitch')
                     )
+                    expect(body.total_count).to.be.a('string')
+                    expect(body.total_count).to.eql('11')
                   });
 
               });
