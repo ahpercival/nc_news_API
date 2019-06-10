@@ -18,6 +18,7 @@ exports.handlePsqlErrors = (err, req, res, next) => {
 }
 
 exports.handle400Errors = (err, req, res, next) => {
+  console.log(err)
   if (errMsg[400][err.code]) {
     res.status(400).send({ msg: errMsg[400][err.code] })
   } else next(err)
