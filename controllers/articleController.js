@@ -84,7 +84,7 @@ const deleteArticleById = (req, res, next) => {
             if (!result) { return next({ code: 4041 }) }
             res.status(204).send()
         })
-        .catch(next)
+        .catch((err) => { return next(err) })
 }
 
 module.exports = {
