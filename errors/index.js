@@ -9,6 +9,7 @@ exports.methodNotAllowed = (req, res) => {
 };
 
 exports.handlePsqlErrors = (err, req, res, next) => {
+  console.log(err)
   if (errMsg.PSQL[err.code] && err.detail === 'Key (article_id)=(10000) is not present in table "articles".') {
     res.status(404).send({ msg: errMsg.PSQL[err.code] })
   }// <<<<REVIEW & REFACTOR THIS<<<
@@ -18,7 +19,6 @@ exports.handlePsqlErrors = (err, req, res, next) => {
 }
 
 exports.handle400Errors = (err, req, res, next) => {
-  console.log(err)
   if (errMsg[400][err.code]) {
     res.status(400).send({ msg: errMsg[400][err.code] })
   } else next(err)
