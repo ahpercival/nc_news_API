@@ -535,7 +535,7 @@ describe('THE API ENDPOINT', () => {
 
           });
 
-          describe.only('DELETE Request', () => {
+          describe('DELETE Request', () => {
 
             describe('Status 204 - No Content', () => {
               it('Should delete the given article by article_id & respond with status 204 and no content', () => {
